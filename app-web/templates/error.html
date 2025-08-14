@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Agencia de Aduanas ERP{% endblock %}
+
+{% block content %}
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 80px auto;
+        text-align: center;
+    }
+    
+    .error-icon {
+        font-size: 80px;
+        color: #e74c3c;
+        margin-bottom: 20px;
+    }
+    
+    .error-code {
+        font-size: 120px;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 20px;
+        line-height: 1;
+    }
+    
+    .error-message {
+        background: white;
+        border-radius: 8px;
+        padding: 40px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .error-message h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+    
+    .error-message p {
+        color: #7f8c8d;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+    
+    .error-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .error-details {
+        background: #f8f9fa;
+        border-radius: 4px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: left;
+    }
+    
+    .error-details h3 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    
+    .error-details pre {
+        color: #7f8c8d;
+        font-size: 14px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    
+    @media (max-width: 768px) {
+        .error-container {
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .error-icon {
+            font-size: 60px;
+        }
+        
+        .error-code {
+            font-size: 80px;
+        }
+        
+        .error-message {
+            padding: 30px 20px;
+        }
+        
+        .error-message h1 {
+            font-size: 24px;
+        }
+        
+        .error-message p {
+            font-size: 16px;
+        }
+        
+        .error-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .error-actions .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .error-code {
+            font-size: 60px;
+        }
+        
+        .error-details {
+            padding: 15px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-message">
+        {% if code == 403 %}
+        <div class="error-icon">🚫</div>
+        <h1>Acceso Denegado</h1>
+        <p>{{ error or "No tienes permisos suficientes para acceder a esta página." }}</p>
+        
+        {% elif code == 404 %}
+        <div class="error-icon">🔍</div>
+        <h1>Página No Encontrada</h1>
+        <p>{{ error or "La página que buscas no existe o ha sido movida." }}</p>
+        
+        {% elif code == 500 %}
+        <div class="error-icon">⚠️</div>
+        <h1>Error del Servidor</h1>
+        <p>{{ error or "Ha ocurrido un error interno. Por favor, intenta nuevamente más tarde." }}</p>
+        
+        {% else %}
+        <div class="error-code">{{ code or "Error" }}</div>
+        <h1>Ha Ocurrido un Error</h1>
+        <p>{{ error or "Lo sentimos, algo salió mal. Por favor, intenta nuevamente." }}</p>
+        {% endif %}
+        
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn">Ir al Inicio</a>
+            {% if current_user %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Ir al Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+        
+        {% if error and code %}
+        <div class="error-details">
+            <h3>Detalles del Error:</h3>
+            <pre>Código: {{ code }}
+Mensaje: {{ error }}</pre>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

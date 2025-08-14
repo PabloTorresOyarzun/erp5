@@ -1,0 +1,115 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-despachos:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DESPACHOS_DB_NAME}
+      - POSTGRES_USER=${DESPACHOS_DB_USER}
+      - POSTGRES_PASSWORD=${DESPACHOS_DB_PASSWORD}
+    volumes:
+      - postgres_despachos_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DESPACHOS_DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    env_file:
+      - .env
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - KC_DB_USERNAME=${POSTGRES_USER}
+      - KC_DB_PASSWORD=${POSTGRES_PASSWORD}
+    command: start-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  keycloak-init:
+    build: ./keycloak
+    env_file:
+      - .env
+    depends_on:
+      - keycloak
+    ports:
+      - "8001:8000"
+    restart: on-failure:10
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  api-docs:
+    build: ./api-docs
+    env_file:
+      - .env
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres-despachos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-despachos:
+    build: ./api-despachos
+    env_file:
+      - .env
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres-despachos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app-web:
+    build: ./app-web
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    depends_on:
+      keycloak-init:
+        condition: service_healthy
+      api-docs:
+        condition: service_healthy
+      api-despachos:
+        condition: service_healthy
+    restart: on-failure:5
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  postgres_data:
+  postgres_despachos_data:

@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+azure-ai-formrecognizer
+pydantic
+openpyxl
+python-multipart
+psycopg2-binary
