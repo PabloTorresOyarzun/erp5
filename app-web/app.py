@@ -287,6 +287,40 @@ def api_subir_documento():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/despachos/<numero>/documento/subir', methods=['POST'])
+@login_required
+def api_subir_documento_file(numero):
+    """Subir documento con archivo"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No se encontró archivo"}), 400
+        
+        file = request.files['file']
+        tipo_documento = request.form.get('tipo_documento', 'general')
+        
+        if file.filename == '':
+            return jsonify({"error": "No se seleccionó archivo"}), 400
+        
+        # Preparar para enviar
+        files = {'file': (file.filename, file.stream, file.mimetype)}
+        
+        response = requests.post(
+            f"{DESPACHOS_API_URL}/despachos/documento/subir",
+            files=files,
+            params={
+                'numero_despacho': numero,
+                'tipo_documento': tipo_documento
+            }
+        )
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Error subiendo documento"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # API endpoints para documentos (legacy - mantener por compatibilidad)
 @app.route('/api/documents/process/<doc_type>', methods=['POST'])
 @login_required

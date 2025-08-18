@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Header
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, Header, Form
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -902,8 +902,8 @@ async def health():
 @app.post("/process/invoice")
 async def process_invoice(
     file: UploadFile = File(...),
-    numero_despacho: Optional[str] = None,
-    tipo_documento: Optional[str] = "factura_comercial",
+    numero_despacho: Optional[str] = Form(None),
+    tipo_documento: Optional[str] = Form("factura_comercial"),
     authorization: str = Header(None)
 ):
     """Procesar una factura usando Azure Document Intelligence"""

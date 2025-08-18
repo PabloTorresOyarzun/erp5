@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, UploadFile, File
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, String, Text, DateTime, Boolean, Integer, JSON
 from sqlalchemy.ext.declarative import declarative_base
@@ -74,12 +74,6 @@ def get_db():
 # Modelos Pydantic
 class DespachoCreate(BaseModel):
     numero_despacho: str
-    documentos_requeridos: List[str] = [
-        "factura_comercial",
-        "conocimiento_transporte",
-        "certificado_origen",
-        "packing_list"
-    ]
     extra_metadata: Optional[Dict[str, Any]] = {}
 
 class DocumentoUpload(BaseModel):
@@ -103,12 +97,10 @@ class ProcedimientoCreate(BaseModel):
     tipo_procedimiento: str
     usuario_asignado: Optional[str] = None
 
-# Configuración de tipos de documentos requeridos por defecto
-DOCUMENTOS_REQUERIDOS_DEFAULT = [
+# Configuración de tipos de documentos requeridos FIJOS
+DOCUMENTOS_REQUERIDOS = [
     "factura_comercial",
-    "conocimiento_embarque", 
-    "certificado_origen",
-    "packing_list"
+    "documento_transporte"
 ]
 
 # Endpoints
@@ -140,10 +132,10 @@ async def crear_despacho(
     
     nuevo_despacho = Despacho(
         numero_despacho=despacho_data.numero_despacho,
-        documentos_requeridos=despacho_data.documentos_requeridos,
+        documentos_requeridos=DOCUMENTOS_REQUERIDOS,  # Siempre los mismos
         documentos_presentes=[],
         datos_extraidos={},
-        extra_metadata=despacho_data.extra_metadata  # CORREGIDO
+        extra_metadata=despacho_data.extra_metadata
     )
     
     db.add(nuevo_despacho)
@@ -169,7 +161,7 @@ async def obtener_documentos_sgd(
     if not despacho:
         despacho = Despacho(
             numero_despacho=numero_despacho,
-            documentos_requeridos=DOCUMENTOS_REQUERIDOS_DEFAULT,
+            documentos_requeridos=DOCUMENTOS_REQUERIDOS,
             documentos_presentes=[],
             datos_extraidos={},
             extra_metadata={}
@@ -237,11 +229,11 @@ async def obtener_documentos_sgd(
                 tipo = 'general'
                 nombre_lower = nombre.lower()
                 
-                # Mejorar detección
+                # Mejorar detección - ACTUALIZADO
                 if 'factura' in nombre_lower or 'invoice' in nombre_lower or 'facture' in nombre_lower:
                     tipo = 'factura_comercial'
-                elif 'bl' in nombre_lower or 'awb' in nombre_lower or 'waybill' in nombre_lower or 'transporte' in nombre_lower or 'bill-of-lading' in nombre_lower:
-                    tipo = 'conocimiento_transporte'
+                elif any(term in nombre_lower for term in ['bl', 'awb', 'waybill', 'transporte', 'transport', 'bill-of-lading', 'embarque']):
+                    tipo = 'documento_transporte'
                 elif 'packing' in nombre_lower or 'lista-empaque' in nombre_lower:
                     tipo = 'packing_list'
                 elif 'certificado' in nombre_lower or 'certificate' in nombre_lower or 'origen' in nombre_lower:
@@ -301,30 +293,46 @@ async def obtener_documentos_sgd(
 
 @app.post("/despachos/documento/subir")
 async def subir_documento(
-    documento: DocumentoUpload,
+    numero_despacho: str,
+    tipo_documento: str,
+    file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
     """Subir un documento a un despacho"""
     despacho = db.query(Despacho).filter(
-        Despacho.numero_despacho == documento.numero_despacho
+        Despacho.numero_despacho == numero_despacho
     ).first()
     
     if not despacho:
-        raise HTTPException(status_code=404, detail="Despacho no encontrado")
+        # Crear despacho si no existe
+        despacho = Despacho(
+            numero_despacho=numero_despacho,
+            documentos_requeridos=DOCUMENTOS_REQUERIDOS,
+            documentos_presentes=[],
+            datos_extraidos={},
+            extra_metadata={}
+        )
+        db.add(despacho)
+        db.commit()
+        db.refresh(despacho)
+    
+    # Leer archivo y convertir a base64
+    contents = await file.read()
+    contenido_base64 = base64.b64encode(contents).decode('utf-8')
     
     nuevo_doc = Documento(
-        numero_despacho=documento.numero_despacho,
-        tipo_documento=documento.tipo_documento,
-        nombre_archivo=documento.nombre_archivo,
-        contenido_base64=documento.contenido_base64,
+        numero_despacho=numero_despacho,
+        tipo_documento=tipo_documento,
+        nombre_archivo=file.filename,
+        contenido_base64=contenido_base64,
         procesado=False
     )
     
     db.add(nuevo_doc)
     
     documentos_presentes = despacho.documentos_presentes or []
-    if documento.tipo_documento not in documentos_presentes:
-        documentos_presentes.append(documento.tipo_documento)
+    if tipo_documento not in documentos_presentes:
+        documentos_presentes.append(tipo_documento)
         despacho.documentos_presentes = documentos_presentes
     
     db.commit()
@@ -349,7 +357,7 @@ async def obtener_estado_despacho(
     if not despacho:
         raise HTTPException(status_code=404, detail="Despacho no encontrado")
     
-    documentos_requeridos = despacho.documentos_requeridos or DOCUMENTOS_REQUERIDOS_DEFAULT
+    documentos_requeridos = DOCUMENTOS_REQUERIDOS  # Siempre los mismos
     documentos_presentes = despacho.documentos_presentes or []
     documentos_faltantes = [doc for doc in documentos_requeridos if doc not in documentos_presentes]
     
@@ -402,7 +410,8 @@ async def listar_documentos_despacho(
             "procesado": doc.procesado,
             "fecha_carga": doc.fecha_carga.isoformat(),
             "fecha_procesamiento": doc.fecha_procesamiento.isoformat() if doc.fecha_procesamiento else None,
-            "tiene_contenido": bool(doc.contenido_base64)
+            "tiene_contenido": bool(doc.contenido_base64),
+            "tiene_datos": bool(doc.datos_extraidos)
         })
     
     return documentos_data
@@ -439,6 +448,115 @@ async def obtener_documento_pdf(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error decodificando PDF: {str(e)}")
 
+@app.get("/despachos/{numero_despacho}/documento/{documento_id}/json")
+async def obtener_documento_json(
+    numero_despacho: str,
+    documento_id: int,
+    db: Session = Depends(get_db)
+):
+    """Obtener datos extraídos del documento en formato JSON"""
+    documento = db.query(Documento).filter(
+        Documento.id == documento_id,
+        Documento.numero_despacho == numero_despacho
+    ).first()
+    
+    if not documento:
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
+    
+    if not documento.datos_extraidos:
+        raise HTTPException(status_code=404, detail="El documento no tiene datos procesados")
+    
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        content=documento.datos_extraidos,
+        headers={
+            "Content-Disposition": f"attachment; filename={documento.nombre_archivo}.json"
+        }
+    )
+
+@app.post("/despachos/{numero_despacho}/documento/{documento_id}/procesar")
+async def procesar_documento_individual(
+    numero_despacho: str,
+    documento_id: int,
+    db: Session = Depends(get_db),
+    authorization: str = Header(None)
+):
+    """Procesar un documento individual"""
+    documento = db.query(Documento).filter(
+        Documento.id == documento_id,
+        Documento.numero_despacho == numero_despacho
+    ).first()
+    
+    if not documento:
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
+    
+    if not documento.contenido_base64:
+        raise HTTPException(status_code=400, detail="El documento no tiene contenido")
+    
+    try:
+        pdf_bytes = base64.b64decode(documento.contenido_base64)
+        
+        # Determinar endpoint según tipo
+        endpoint = "invoice" if "factura" in documento.tipo_documento.lower() else "transport"
+        
+        from io import BytesIO
+        files = {
+            'file': (documento.nombre_archivo, BytesIO(pdf_bytes), 'application/pdf')
+        }
+        
+        # Agregar número de despacho y tipo para guardar en BD
+        data = {
+            'numero_despacho': numero_despacho,
+            'tipo_documento': documento.tipo_documento
+        }
+        
+        headers = {}
+        if authorization:
+            headers['Authorization'] = authorization
+        
+        response = requests.post(
+            f"http://api-docs:8002/process/{endpoint}",
+            files=files,
+            data=data,
+            headers=headers
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            
+            # Actualizar documento
+            documento.datos_extraidos = result.get('extracted_data', {})
+            documento.procesado = True
+            documento.fecha_procesamiento = datetime.now()
+            
+            # Actualizar despacho
+            despacho = db.query(Despacho).filter(
+                Despacho.numero_despacho == numero_despacho
+            ).first()
+            
+            if despacho:
+                datos_actuales = despacho.datos_extraidos or {}
+                datos_actuales[documento.tipo_documento] = documento.datos_extraidos
+                despacho.datos_extraidos = datos_actuales
+                despacho.fecha_actualizacion = datetime.now()
+            
+            db.commit()
+            
+            return {
+                "message": "Documento procesado exitosamente",
+                "documento_id": documento_id,
+                "tipo": documento.tipo_documento,
+                "datos_extraidos": documento.datos_extraidos
+            }
+        else:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail=f"Error procesando documento: {response.text}"
+            )
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error procesando documento: {str(e)}")
+
 @app.post("/despachos/{numero_despacho}/procesar")
 async def procesar_despacho(
     numero_despacho: str,
@@ -454,26 +572,19 @@ async def procesar_despacho(
     if not despacho:
         raise HTTPException(status_code=404, detail="Despacho no encontrado")
     
-    estado = await obtener_estado_despacho(numero_despacho, db)
-    
-    if not estado.puede_procesar and not forzar:
-        raise HTTPException(
-            status_code=400,
-            detail=f"El despacho no está completo. Faltan: {', '.join(estado.documentos_faltantes)}"
-        )
-    
-    documentos = db.query(Documento).filter(
-        Documento.numero_despacho == numero_despacho,
-        Documento.procesado == False
-    ).all()
-    
-    if not documentos and not forzar:
-        return {"message": "No hay documentos para procesar"}
-    
+    # Obtener documentos no procesados (o todos si forzar=True)
     if forzar:
         documentos = db.query(Documento).filter(
             Documento.numero_despacho == numero_despacho
         ).all()
+    else:
+        documentos = db.query(Documento).filter(
+            Documento.numero_despacho == numero_despacho,
+            Documento.procesado == False
+        ).all()
+    
+    if not documentos:
+        return {"message": "No hay documentos para procesar", "total_procesados": 0}
     
     despacho.estado = "procesando"
     db.commit()
@@ -486,11 +597,17 @@ async def procesar_despacho(
             if doc.contenido_base64:
                 pdf_bytes = base64.b64decode(doc.contenido_base64)
                 
+                # Determinar endpoint según tipo
                 endpoint = "invoice" if "factura" in doc.tipo_documento.lower() else "transport"
                 
                 from io import BytesIO
                 files = {
                     'file': (doc.nombre_archivo, BytesIO(pdf_bytes), 'application/pdf')
+                }
+                
+                data = {
+                    'numero_despacho': numero_despacho,
+                    'tipo_documento': doc.tipo_documento
                 }
                 
                 headers = {}
@@ -500,6 +617,7 @@ async def procesar_despacho(
                 response = requests.post(
                     f"http://api-docs:8002/process/{endpoint}",
                     files=files,
+                    data=data,
                     headers=headers
                 )
                 
@@ -645,9 +763,9 @@ async def completar_procedimiento(
 
 @app.get("/despachos")
 async def listar_despachos(
-    limit: int = 25,  # Cambio: era 50, ahora 25 por página
+    limit: int = 25,
     offset: int = 0,
-    search: Optional[str] = None,  # NUEVO: búsqueda por número
+    search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     """Listar despachos con paginación y búsqueda"""
@@ -670,7 +788,7 @@ async def listar_despachos(
     
     despachos_data = []
     for desp in despachos:
-        documentos_requeridos = desp.documentos_requeridos or DOCUMENTOS_REQUERIDOS_DEFAULT
+        documentos_requeridos = DOCUMENTOS_REQUERIDOS  # Siempre los mismos
         documentos_presentes = desp.documentos_presentes or []
         porcentaje = (len(documentos_presentes) / len(documentos_requeridos) * 100) if documentos_requeridos else 0
         
@@ -679,7 +797,7 @@ async def listar_despachos(
             "estado": desp.estado,
             "fecha_creacion": desp.fecha_creacion.isoformat(),
             "fecha_actualizacion": desp.fecha_actualizacion.isoformat(),
-            "porcentaje_completitud": round(porcentaje, 1),  # Redondear a 1 decimal
+            "porcentaje_completitud": round(porcentaje, 1),
             "documentos_presentes": len(documentos_presentes),
             "documentos_requeridos": len(documentos_requeridos),
             "puede_procesar": len(documentos_presentes) == len(documentos_requeridos)
@@ -690,7 +808,7 @@ async def listar_despachos(
         "total": total,
         "limit": limit,
         "offset": offset,
-        "total_pages": (total + limit - 1) // limit,  # Calcular páginas totales
+        "total_pages": (total + limit - 1) // limit,
         "current_page": (offset // limit) + 1,
         "has_next": offset + limit < total,
         "has_prev": offset > 0
