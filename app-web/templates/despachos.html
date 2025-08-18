@@ -19,12 +19,6 @@
         align-items: center;
     }
     
-    .despachos-actions span {
-        font-weight: 500;
-        color: #2c3e50;
-        white-space: nowrap;
-    }
-    
     .search-box {
         display: flex;
         gap: 10px;
@@ -51,8 +45,61 @@
         padding: 20px;
         border-bottom: 1px solid #e0e0e0;
         display: flex;
-        justify-content: between;
+        justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .table-header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .table-header-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .total-badge {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .btn-back {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-back .icon {
+        font-size: 18px;
+        transition: transform 0.3s;
+    }
+    
+    .btn-back:hover .icon {
+        transform: translateX(-3px);
     }
     
     table {
@@ -86,9 +133,20 @@
         font-weight: 500;
     }
     
-    .status-pendiente { background: #fff3e0; color: #f57c00; }
-    .status-procesando { background: #e3f2fd; color: #1976d2; }
-    .status-completo { background: #e8f5e9; color: #2e7d32; }
+    .status-pendiente { 
+        background: #fff3e0; 
+        color: #f57c00; 
+    }
+    
+    .status-procesando { 
+        background: #e3f2fd; 
+        color: #1976d2; 
+    }
+    
+    .status-completo { 
+        background: #e8f5e9; 
+        color: #2e7d32; 
+    }
     
     .progress-mini {
         width: 60px;
@@ -180,26 +238,43 @@
         display: block;
     }
     
-    
     @media (max-width: 768px) {
         .despachos-header {
             flex-direction: column;
             align-items: stretch;
         }
         
-        .despachos-actions {
+        .table-header {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .table-header-left,
+        .table-header-right {
+            width: 100%;
             justify-content: space-between;
-            flex-wrap: wrap;
+        }
+        
+        .table-header-right {
+            flex-direction: column;
             gap: 10px;
         }
         
-        .despachos-actions span {
-            order: -1;
+        .search-box {
             width: 100%;
         }
         
         .search-box input {
-            min-width: 150px;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            width: 100%;
+        }
+        
+        .btn-back {
+            width: 100%;
+            justify-content: center;
         }
         
         table {
@@ -214,22 +289,26 @@
 
 <div class="despachos-header">
     <h1>Gestión de Despachos</h1>
-    <div class="despachos-actions" id="headerActions">
-        <span id="totalDespachos">Total: 0</span>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Número de despacho específico...">
-            <button class="btn" onclick="buscarDespachoEspecifico()">🔍</button>
-        </div>
-        <button class="btn btn-primary" onclick="nuevoDespacho()">+ Nuevo Despacho</button>
-    </div>
     <div class="despachos-actions" id="detalleActions" style="display: none;">
-        <button class="btn" onclick="volverALista()">← Volver a la lista</button>
+        <button class="btn-back" onclick="volverALista()">
+            <span class="icon">←</span>
+            <span>Volver a la lista</span>
+        </button>
     </div>
 </div>
 
 <div class="despachos-table" id="despachosList">
     <div class="table-header">
-        <h2>Últimos Despachos</h2>
+        <div class="table-header-left">
+            <span class="total-badge" id="totalDespachos">Total: 0</span>
+        </div>
+        <div class="table-header-right">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Número de despacho específico...">
+                <button class="btn" onclick="buscarDespachoEspecifico()">🔍</button>
+            </div>
+            <button class="btn btn-primary" onclick="nuevoDespacho()">+ Nuevo Despacho</button>
+        </div>
     </div>
     
     <table>
@@ -291,10 +370,18 @@
             <div style="margin-bottom: 20px;">
                 <label>Documentos Requeridos</label>
                 <div style="margin-top: 10px;">
-                    <label style="display: block; margin-bottom: 5px;"><input type="checkbox" value="factura_comercial" checked> Factura Comercial</label>
-                    <label style="display: block; margin-bottom: 5px;"><input type="checkbox" value="conocimiento_transporte" checked> Conocimiento de Transporte</label>
-                    <label style="display: block; margin-bottom: 5px;"><input type="checkbox" value="certificado_origen" checked> Certificado de Origen</label>
-                    <label style="display: block; margin-bottom: 5px;"><input type="checkbox" value="packing_list" checked> Packing List</label>
+                    <label style="display: block; margin-bottom: 5px;">
+                        <input type="checkbox" value="factura_comercial" checked> Factura Comercial
+                    </label>
+                    <label style="display: block; margin-bottom: 5px;">
+                        <input type="checkbox" value="conocimiento_transporte" checked> Conocimiento de Transporte
+                    </label>
+                    <label style="display: block; margin-bottom: 5px;">
+                        <input type="checkbox" value="certificado_origen" checked> Certificado de Origen
+                    </label>
+                    <label style="display: block; margin-bottom: 5px;">
+                        <input type="checkbox" value="packing_list" checked> Packing List
+                    </label>
                 </div>
             </div>
             
@@ -327,7 +414,7 @@ async function cargarDespachos(page = 1) {
         actualizarPaginacion(data.total, page);
         
         // Actualizar total en header
-        document.getElementById('totalDespachos').textContent = `Total: ${data.total}`;
+        document.getElementById('totalDespachos').innerHTML = `<strong>${data.total}</strong> Despachos`;
         
     } catch (error) {
         console.error('Error cargando despachos:', error);
@@ -342,7 +429,6 @@ function volverALista() {
     document.getElementById('despachoDetail').style.display = 'none';
     
     // Cambiar header actions
-    document.getElementById('headerActions').style.display = 'flex';
     document.getElementById('detalleActions').style.display = 'none';
     
     // Limpiar selección
@@ -432,7 +518,6 @@ async function seleccionarDespacho(numero) {
         document.getElementById('despachoDetail').style.display = 'block';
         
         // Cambiar header actions
-        document.getElementById('headerActions').style.display = 'none';
         document.getElementById('detalleActions').style.display = 'flex';
         
     } catch (error) {
@@ -467,7 +552,7 @@ async function cargarDetalleDespacho(numero) {
         
     } catch (error) {
         console.error('Error cargando detalle:', error);
-        throw error; // Re-lanzar para que lo maneje seleccionarDespacho
+        throw error;
     }
 }
 
@@ -625,7 +710,7 @@ function nuevoDespacho() {
 
 function cerrarModal() {
     document.getElementById('nuevoDespachoModal').style.display = 'none';
-    document.getElementById('nuevoDespachoForm').reset(); // Limpiar formulario
+    document.getElementById('nuevoDespachoForm').reset();
 }
 
 document.getElementById('nuevoDespachoForm').addEventListener('submit', async function(e) {
