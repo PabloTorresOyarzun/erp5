@@ -237,6 +237,226 @@
     .detail-content.active {
         display: block;
     }
+
+    .documentos-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-upload {
+        background: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.3s;
+    }
+
+    .btn-upload:hover {
+        background: #27ae60;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 30px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        color: #2c3e50;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #7f8c8d;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-close:hover {
+        color: #2c3e50;
+    }
+
+    /* Drag and Drop Styles */
+    .upload-zone {
+        border: 2px dashed #3498db;
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        background: #f8f9fa;
+        transition: all 0.3s;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .upload-zone.dragover {
+        border-color: #2ecc71;
+        background: #e8f5e9;
+        transform: scale(1.02);
+    }
+
+    .upload-zone .upload-icon {
+        font-size: 48px;
+        color: #3498db;
+        margin-bottom: 15px;
+    }
+
+    .upload-zone .upload-text {
+        color: #2c3e50;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .upload-zone .upload-subtext {
+        color: #7f8c8d;
+        font-size: 14px;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .file-preview {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        display: none;
+    }
+
+    .file-preview.show {
+        display: block;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .file-icon {
+        font-size: 24px;
+        color: #e74c3c;
+    }
+
+    .file-details {
+        flex: 1;
+    }
+
+    .file-name {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .file-size {
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+
+    .upload-progress {
+        width: 100%;
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .upload-progress-fill {
+        height: 100%;
+        background: #2ecc71;
+        width: 0%;
+        transition: width 0.3s;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-secondary {
+        background: #95a5a6;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background: #7f8c8d;
+    }
     
     @media (max-width: 768px) {
         .despachos-header {
@@ -283,6 +503,24 @@
         
         th, td {
             padding: 10px;
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .upload-zone {
+            padding: 30px 15px;
+        }
+
+        .documentos-header {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-upload {
+            width: 100%;
+            justify-content: center;
         }
     }
 </style>
@@ -386,16 +624,190 @@
     </div>
 </div>
 
+<!-- Modal para subir documentos -->
+<div class="modal" id="uploadModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Subir Documentos</h2>
+            <button class="modal-close" onclick="cerrarUploadModal()">&times;</button>
+        </div>
+        
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Arrastra archivos aquí o haz clic para seleccionar</div>
+            <div class="upload-subtext">Solo archivos PDF hasta 10MB</div>
+        </div>
+        
+        <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple>
+        
+        <div class="form-group">
+            <label for="tipoDocumento">Tipo de Documento</label>
+            <select id="tipoDocumento">
+                <option value="factura_comercial">Factura Comercial</option>
+                <option value="documento_transporte">Documento de Transporte</option>
+                <option value="packing_list">Lista de Empaque</option>
+                <option value="certificado_origen">Certificado de Origen</option>
+                <option value="general">General</option>
+            </select>
+        </div>
+        
+        <div class="file-preview" id="filePreview">
+            <div class="file-info">
+                <div class="file-icon">📄</div>
+                <div class="file-details">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+            </div>
+            <div class="upload-progress">
+                <div class="upload-progress-fill" id="uploadProgress"></div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="cerrarUploadModal()">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="uploadBtn" onclick="subirArchivo()" disabled>Subir Documento</button>
+        </div>
+    </div>
+</div>
+
 <script>
 let currentPage = 1;
 let totalPages = 1;
 let pageSize = 25;
 let despachoSeleccionado = null;
+let archivoSeleccionado = null;
 
 // Cargar despachos al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     cargarDespachos();
+    setupDragAndDrop();
 });
+
+function setupDragAndDrop() {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    // Eventos de drag and drop
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+    
+    uploadZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+    });
+    
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelection(files[0]);
+        }
+    });
+    
+    // Evento de selección de archivo
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            handleFileSelection(e.target.files[0]);
+        }
+    });
+}
+
+function handleFileSelection(file) {
+    // Validar tipo de archivo
+    if (file.type !== 'application/pdf') {
+        alert('Solo se permiten archivos PDF');
+        return;
+    }
+    
+    // Validar tamaño (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        alert('El archivo no puede ser mayor a 10MB');
+        return;
+    }
+    
+    archivoSeleccionado = file;
+    
+    // Mostrar preview
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = formatFileSize(file.size);
+    document.getElementById('filePreview').classList.add('show');
+    document.getElementById('uploadBtn').disabled = false;
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function abrirUploadModal() {
+    document.getElementById('uploadModal').classList.add('show');
+    // Reset form
+    archivoSeleccionado = null;
+    document.getElementById('filePreview').classList.remove('show');
+    document.getElementById('uploadBtn').disabled = true;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('uploadProgress').style.width = '0%';
+}
+
+function cerrarUploadModal() {
+    document.getElementById('uploadModal').classList.remove('show');
+}
+
+async function subirArchivo() {
+    if (!archivoSeleccionado || !despachoSeleccionado) {
+        alert('Selecciona un archivo primero');
+        return;
+    }
+    
+    const tipoDocumento = document.getElementById('tipoDocumento').value;
+    const formData = new FormData();
+    formData.append('file', archivoSeleccionado);
+    formData.append('tipo_documento', tipoDocumento);
+    
+    try {
+        // Mostrar progreso
+        document.getElementById('uploadProgress').style.width = '50%';
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('uploadBtn').textContent = 'Subiendo...';
+        
+        const response = await fetch(`/api/despachos/${despachoSeleccionado}/documento/subir`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Simular progreso completo
+        document.getElementById('uploadProgress').style.width = '100%';
+        
+        if (response.ok) {
+            const result = await response.json();
+            alert('Documento subido exitosamente');
+            cerrarUploadModal();
+            
+            // Recargar documentos
+            await cargarDetalleDespacho(despachoSeleccionado);
+        } else {
+            const error = await response.json();
+            alert('Error subiendo documento: ' + (error.error || 'Error desconocido'));
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión: ' + error.message);
+    } finally {
+        // Reset UI
+        document.getElementById('uploadBtn').disabled = false;
+        document.getElementById('uploadBtn').textContent = 'Subir Documento';
+        document.getElementById('uploadProgress').style.width = '0%';
+    }
+}
 
 async function cargarDespachos(page = 1) {
     try {
@@ -574,18 +986,33 @@ function mostrarDetalleResumen(estado) {
 }
 
 function mostrarDetalleDocumentos(documentos) {
-    const grid = documentos.map(doc => `
-        <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; margin-bottom: 10px;">
-            <h4>${doc.tipo_documento.replace(/_/g, ' ').toUpperCase()}</h4>
-            <span class="status-badge ${doc.procesado ? 'status-completo' : 'status-pendiente'}">
-                ${doc.procesado ? 'Procesado' : 'Pendiente'}
-            </span>
-            <p style="font-size: 14px; color: #666; margin: 10px 0;">${doc.nombre_archivo}</p>
-            <button class="btn btn-small" onclick="verDocumento(${doc.id})">Ver PDF</button>
+    let html = `
+        <div class="documentos-header">
+            <h3>Documentos del Despacho</h3>
+            <button class="btn-upload" onclick="abrirUploadModal()">
+                <span>📤</span>
+                <span>Subir Documentos</span>
+            </button>
         </div>
-    `).join('');
+    `;
     
-    document.getElementById('detail-documentos').innerHTML = grid || '<p>No hay documentos</p>';
+    if (documentos.length === 0) {
+        html += '<p style="text-align: center; color: #7f8c8d; margin: 40px 0;">No hay documentos cargados</p>';
+    } else {
+        const grid = documentos.map(doc => `
+            <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; margin-bottom: 10px;">
+                <h4>${doc.tipo_documento.replace(/_/g, ' ').toUpperCase()}</h4>
+                <span class="status-badge ${doc.procesado ? 'status-completo' : 'status-pendiente'}">
+                    ${doc.procesado ? 'Procesado' : 'Pendiente'}
+                </span>
+                <p style="font-size: 14px; color: #666; margin: 10px 0;">${doc.nombre_archivo}</p>
+                <button class="btn btn-small" onclick="verDocumento(${doc.id})">Ver PDF</button>
+            </div>
+        `).join('');
+        html += grid;
+    }
+    
+    document.getElementById('detail-documentos').innerHTML = html;
 }
 
 function mostrarDetalleDatos(datos) {
@@ -710,8 +1137,6 @@ document.getElementById('nuevoDespachoForm').addEventListener('submit', async fu
     e.preventDefault();
     
     const numero = document.getElementById('nuevoNumero').value;
-    const checkboxes = document.querySelectorAll('#nuevoDespachoForm input[type="checkbox"]:checked');
-    const documentosRequeridos = Array.from(checkboxes).map(cb => cb.value);
     
     try {
         const response = await fetch('/api/despachos/crear', {
@@ -719,7 +1144,7 @@ document.getElementById('nuevoDespachoForm').addEventListener('submit', async fu
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 numero_despacho: numero,
-                documentos_requeridos: documentosRequeridos
+                extra_metadata: {}
             })
         });
         
@@ -745,5 +1170,30 @@ function mostrarError(mensaje) {
 document.getElementById('searchInput').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') buscarDespachoEspecifico();
 });
+
+// Cerrar modales con Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (document.getElementById('uploadModal').classList.contains('show')) {
+            cerrarUploadModal();
+        }
+        if (document.getElementById('nuevoDespachoModal').style.display === 'flex') {
+            cerrarModal();
+        }
+    }
+});
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const uploadModal = document.getElementById('uploadModal');
+    const nuevoModal = document.getElementById('nuevoDespachoModal');
+    
+    if (event.target === uploadModal) {
+        cerrarUploadModal();
+    }
+    if (event.target === nuevoModal) {
+        cerrarModal();
+    }
+}
 </script>
 {% endblock %}
