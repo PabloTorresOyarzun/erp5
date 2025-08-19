@@ -372,6 +372,30 @@ def api_subir_documento_file(numero):
     except Exception as e:
         return jsonify({"error": "Error interno"}), 500
 
+@app.route('/api/despachos/<numero>/documento/<int:doc_id>/procesar', methods=['POST'])
+@login_required
+def api_procesar_documento_individual(numero, doc_id):
+    """Procesar documento individual"""
+    try:
+        token = session.get('tokens', {}).get('access_token')
+        headers = {'Authorization': f'Bearer {token}'}
+        
+        response = requests.post(
+            f"{DESPACHOS_API_URL}/despachos/{numero}/documento/{doc_id}/procesar",
+            headers=headers,
+            timeout=120  # 2 minutos para procesamiento
+        )
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify(response.json()), response.status_code
+            
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": "Error de conexión"}), 503
+    except Exception as e:
+        return jsonify({"error": "Error interno"}), 500
+
 # ==================== AUTENTICACIÓN ====================
 
 @app.route('/login')

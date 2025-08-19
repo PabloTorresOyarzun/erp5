@@ -494,9 +494,20 @@ function mostrarDetalleDocumentos(documentos) {
                                 </span>
                             </div>
                             <p class="text-muted small mb-3">${doc.nombre_archivo}</p>
-                            <button class="btn btn-sm btn-primary btn-sm-corporate" onclick="verDocumento(${doc.id})">
-                                <i class="bi bi-eye me-1"></i>Ver PDF
-                            </button>
+                            <div class="btn-group-corporate d-flex gap-2 flex-wrap">
+                                <button class="btn btn-sm btn-primary btn-sm-corporate" onclick="verDocumento(${doc.id})">
+                                    <i class="bi bi-eye me-1"></i>Ver PDF
+                                </button>
+                                ${!doc.procesado ? `
+                                    <button class="btn btn-sm btn-success btn-sm-corporate" onclick="procesarDocumentoIndividual(${doc.id})">
+                                        <i class="bi bi-gear me-1"></i>Procesar
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-sm btn-info btn-sm-corporate" onclick="procesarDocumentoIndividual(${doc.id})">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Reprocesar
+                                    </button>
+                                `}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -570,6 +581,33 @@ function verDespacho(numero) {
 
 function verDocumento(docId) {
     window.open(`/api/despachos/${despachoSeleccionado}/documento/${docId}/pdf`, '_blank');
+}
+
+async function procesarDocumentoIndividual(docId) {
+    if (!despachoSeleccionado) return;
+    
+    try {
+        showAlert('Procesando documento...', 'info');
+        
+        const response = await fetch(`/api/despachos/${despachoSeleccionado}/documento/${docId}/procesar`, {
+            method: 'POST'
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Error procesando documento');
+        }
+        
+        const result = await response.json();
+        showAlert('Documento procesado exitosamente', 'success');
+        
+        // Recargar los detalles del despacho para mostrar el estado actualizado
+        await cargarDetalleDespacho(despachoSeleccionado);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('Error procesando documento: ' + error.message, 'error');
+    }
 }
 
 async function sincronizarSGD() {
