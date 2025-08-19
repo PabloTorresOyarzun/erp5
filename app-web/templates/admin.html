@@ -7,35 +7,40 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>Panel de Administración</h1>
-                <div class="btn-group" role="group">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal" id="newUserBtn">
-                        <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h1 class="text-corporate-secondary">Panel de Administración</h1>
+                <div class="btn-group-corporate d-flex gap-2 flex-wrap" role="group">
+                    <button class="btn btn-primary btn-corporate" data-bs-toggle="modal" data-bs-target="#userModal" id="newUserBtn">
+                        <i class="bi bi-person-plus me-2"></i>
+                        <span class="d-none d-sm-inline">Nuevo Usuario</span>
+                        <span class="d-inline d-sm-none">Nuevo</span>
                     </button>
-                    <button class="btn btn-success" onclick="refreshDatabaseExplorer()" id="refreshDbBtn" style="display: none;">
-                        <i class="bi bi-arrow-clockwise me-2"></i>Actualizar BD
+                    <button class="btn btn-success btn-corporate" onclick="refreshDatabaseExplorer()" id="refreshDbBtn" style="display: none;">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        <span class="d-none d-sm-inline">Actualizar BD</span>
+                        <span class="d-inline d-sm-none">Actualizar</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Alerts Container -->
-    <div id="alertContainer"></div>
-    
     <!-- Navigation Tabs -->
-    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <ul class="nav nav-tabs admin-tabs mb-4" id="adminTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" 
                     type="button" role="tab">
-                <i class="bi bi-people me-2"></i>Gestión de Usuarios
+                <i class="bi bi-people me-2"></i>
+                <span class="d-none d-sm-inline">Gestión de Usuarios</span>
+                <span class="d-inline d-sm-none">Usuarios</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database-pane" 
                     type="button" role="tab">
-                <i class="bi bi-server me-2"></i>Explorador de Base de Datos
+                <i class="bi bi-server me-2"></i>
+                <span class="d-none d-sm-inline">Explorador de Base de Datos</span>
+                <span class="d-inline d-sm-none">Base de Datos</span>
             </button>
         </li>
     </ul>
@@ -45,35 +50,35 @@
         <!-- Users Tab -->
         <div class="tab-pane fade show active" id="users-pane" role="tabpanel">
             <!-- Stats -->
-            <div class="row mb-4">
+            <div class="row mb-4 stats-mobile">
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-muted">Total Usuarios</h3>
-                            <h2 class="text-primary" id="totalUsers">0</h2>
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Total Usuarios</h6>
+                            <h2 class="text-corporate-primary" id="totalUsers">0</h2>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-muted">Usuarios Activos</h3>
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Usuarios Activos</h6>
                             <h2 class="text-success" id="activeUsers">0</h2>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-muted">Grupos</h3>
-                            <h2 class="text-info">11</h2>
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Grupos</h6>
+                            <h2 class="text-corporate-secondary">11</h2>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="text-muted">Roles</h3>
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Roles</h6>
                             <h2 class="text-warning">5</h2>
                         </div>
                     </div>
@@ -81,24 +86,30 @@
             </div>
             
             <!-- Users Table -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Gestión de Usuarios</h5>
-                        <div class="input-group" style="width: 300px;">
-                            <input type="text" class="form-control" placeholder="Buscar usuarios..." id="searchInput" onkeyup="filterUsers()">
-                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <div class="card card-corporate">
+                <div class="card-header card-header-corporate">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-people"></i>
+                            <h5 class="mb-0">Gestión de Usuarios</h5>
+                        </div>
+                        <div class="input-group search-mobile" style="max-width: 300px;">
+                            <input type="text" class="form-control form-control-corporate" 
+                                   placeholder="Buscar usuarios..." id="searchInput" onkeyup="filterUsers()">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-search"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover" id="usersTable">
+                <div class="card-body p-0">
+                    <div class="table-responsive table-responsive-corporate">
+                        <table class="table table-corporate table-hover mb-0" id="usersTable">
                             <thead>
                                 <tr>
                                     <th>Usuario</th>
-                                    <th>Email</th>
-                                    <th>Grupos</th>
+                                    <th class="d-none d-md-table-cell">Email</th>
+                                    <th class="d-none d-lg-table-cell">Grupos</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -106,9 +117,8 @@
                             <tbody id="usersTableBody">
                                 <tr>
                                     <td colspan="5" class="text-center py-4">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Cargando...</span>
-                                        </div>
+                                        <div class="loading-spinner"></div>
+                                        <span class="ms-2">Cargando...</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -121,34 +131,34 @@
         <!-- Database Tab -->
         <div class="tab-pane fade" id="database-pane" role="tabpanel">
             <!-- Database Stats -->
-            <div class="row mb-4">
+            <div class="row mb-4 stats-mobile">
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
                             <h6 class="text-muted">Tamaño BD</h6>
-                            <h4 class="text-primary" id="dbSize">-</h4>
+                            <h4 class="text-corporate-primary" id="dbSize">-</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
                             <h6 class="text-muted">Tablas</h6>
                             <h4 class="text-info" id="dbTables">-</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
                             <h6 class="text-muted">Conexiones</h6>
                             <h4 class="text-success" id="dbConnections">-</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="card text-center">
-                        <div class="card-body">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
                             <h6 class="text-muted">Versión</h6>
                             <small class="text-muted" id="dbVersion">-</small>
                         </div>
@@ -159,19 +169,17 @@
             <!-- Database Explorer -->
             <div class="row">
                 <!-- Database Tree (Left Panel) -->
-                <div class="col-lg-3">
-                    <div class="card h-100">
-                        <div class="card-header">
+                <div class="col-lg-3 mb-4">
+                    <div class="card card-corporate h-100">
+                        <div class="card-header card-header-corporate">
                             <h6 class="mb-0">
                                 <i class="bi bi-server me-2"></i>Explorador de BD
                             </h6>
                         </div>
                         <div class="card-body p-0">
-                            <div class="list-group list-group-flush" id="databaseTree">
+                            <div class="list-group list-group-flush database-tree" id="databaseTree">
                                 <div class="list-group-item text-center py-3">
-                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                        <span class="visually-hidden">Cargando...</span>
-                                    </div>
+                                    <div class="loading-spinner"></div>
                                 </div>
                             </div>
                         </div>
@@ -180,21 +188,24 @@
                 
                 <!-- Content Panel (Right Panel) -->
                 <div class="col-lg-9">
-                    <div class="card h-100">
+                    <div class="card card-corporate h-100">
                         <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                 <h6 class="mb-0" id="contentTitle">
                                     <i class="bi bi-table me-2"></i>Seleccione una tabla
                                 </h6>
-                                <div class="btn-group btn-group-sm" role="group" id="contentActions" style="display: none;">
-                                    <button class="btn btn-outline-primary" onclick="showTableData()" id="btnShowData">
-                                        <i class="bi bi-table"></i> Datos
+                                <div class="btn-group-corporate" role="group" id="contentActions" style="display: none;">
+                                    <button class="btn btn-sm btn-outline-primary btn-sm-corporate" onclick="showTableData()" id="btnShowData">
+                                        <i class="bi bi-table"></i>
+                                        <span class="d-none d-sm-inline ms-1">Datos</span>
                                     </button>
-                                    <button class="btn btn-outline-info" onclick="showTableInfo()" id="btnShowInfo">
-                                        <i class="bi bi-info-circle"></i> Info
+                                    <button class="btn btn-sm btn-outline-info btn-sm-corporate" onclick="showTableInfo()" id="btnShowInfo">
+                                        <i class="bi bi-info-circle"></i>
+                                        <span class="d-none d-sm-inline ms-1">Info</span>
                                     </button>
-                                    <button class="btn btn-outline-secondary" onclick="showTableSchema()" id="btnShowSchema">
-                                        <i class="bi bi-code"></i> Esquema
+                                    <button class="btn btn-sm btn-outline-secondary btn-sm-corporate" onclick="showTableSchema()" id="btnShowSchema">
+                                        <i class="bi bi-code"></i>
+                                        <span class="d-none d-sm-inline ms-1">Esquema</span>
                                     </button>
                                 </div>
                             </div>
@@ -205,7 +216,7 @@
                                 <i class="bi bi-database" style="font-size: 48px;"></i>
                                 <p class="mt-3">Seleccione una tabla del explorador para ver su contenido</p>
                                 <div class="mt-4">
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#queryModal">
+                                    <button class="btn btn-primary btn-corporate" data-bs-toggle="modal" data-bs-target="#queryModal">
                                         <i class="bi bi-play-circle me-2"></i>Ejecutar Consulta SQL
                                     </button>
                                 </div>
@@ -215,12 +226,12 @@
                             <div id="tableDataView" style="display: none;">
                                 <div class="p-3 border-bottom">
                                     <div class="row align-items-center">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-2 mb-md-0">
                                             <small class="text-muted">Mostrando registros <span id="recordsInfo">0</span></small>
                                         </div>
-                                        <div class="col-md-6 text-end">
-                                            <div class="btn-group btn-group-sm">
-                                                <select class="form-select form-select-sm" id="pageSizeSelect" onchange="changePageSize()" style="width: auto;">
+                                        <div class="col-md-6 text-md-end">
+                                            <div class="d-flex justify-content-end">
+                                                <select class="form-select form-select-sm form-select-corporate" id="pageSizeSelect" onchange="changePageSize()" style="width: auto;">
                                                     <option value="25">25</option>
                                                     <option value="50" selected>50</option>
                                                     <option value="100">100</option>
@@ -230,15 +241,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="table-responsive" style="max-height: 600px;">
-                                    <table class="table table-sm table-hover mb-0" id="dataTable">
+                                <div class="table-responsive table-responsive-mobile" style="max-height: 600px;">
+                                    <table class="table table-sm table-hover table-mobile mb-0" id="dataTable">
                                         <thead class="table-light sticky-top"></thead>
                                         <tbody></tbody>
                                     </table>
                                 </div>
                                 <div class="p-3 border-top">
                                     <nav>
-                                        <ul class="pagination pagination-sm justify-content-center mb-0" id="tablePagination"></ul>
+                                        <ul class="pagination pagination-sm justify-content-center mb-0 table-pagination" id="tablePagination"></ul>
                                     </nav>
                                 </div>
                             </div>
@@ -248,7 +259,7 @@
                             
                             <!-- Table Schema View -->
                             <div id="tableSchemaView" style="display: none;" class="p-0">
-                                <pre class="border-0 p-4 mb-0" style="background: #f8f9fa; font-size: 13px;"><code id="schemaCode"></code></pre>
+                                <pre class="border-0 p-4 mb-0 schema-view"><code id="schemaCode"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -259,11 +270,13 @@
 </div>
 
 <!-- User Modal -->
-<div class="modal fade" id="userModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade modal-corporate" id="userModal" tabindex="-1">
+    <div class="modal-dialog modal-mobile">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Nuevo Usuario</h5>
+                <h5 class="modal-title" id="modalTitle">
+                    <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="userForm">
@@ -273,12 +286,12 @@
                     
                     <div class="mb-3">
                         <label for="username" class="form-label">Nombre de Usuario</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <input type="text" class="form-control form-control-corporate" id="username" name="username" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control form-control-corporate" id="email" name="email" required>
                     </div>
                     
                     <div class="mb-3">
@@ -286,22 +299,22 @@
                             Contraseña 
                             <small id="passwordHint" class="text-muted"></small>
                         </label>
-                        <input type="password" class="form-control" id="password" name="password">
+                        <input type="password" class="form-control form-control-corporate" id="password" name="password">
                     </div>
                     
                     <div class="mb-3">
                         <label for="firstName" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="firstName" name="firstName" required>
+                        <input type="text" class="form-control form-control-corporate" id="firstName" name="firstName" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="lastName" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        <input type="text" class="form-control form-control-corporate" id="lastName" name="lastName" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="groups" class="form-label">Grupos</label>
-                        <select class="form-select" id="groups" name="groups" multiple size="5">
+                        <select class="form-select form-select-corporate" id="groups" name="groups" multiple size="5">
                             <option value="Agencia/gerencia">Agencia / Gerencia</option>
                             <option value="Agencia/informatico">Agencia / Informático</option>
                             <option value="Agencia/recursos humanos">Agencia / Recursos Humanos</option>
@@ -314,9 +327,11 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                <div class="modal-footer btn-group-mobile">
+                    <button type="button" class="btn btn-secondary btn-corporate" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-corporate">
+                        <i class="bi bi-check me-2"></i>Guardar
+                    </button>
                 </div>
             </form>
         </div>
@@ -324,38 +339,41 @@
 </div>
 
 <!-- Query Modal -->
-<div class="modal fade" id="queryModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade modal-corporate" id="queryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-mobile">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Ejecutar Consulta SQL</h5>
+                <h5 class="modal-title">
+                    <i class="bi bi-play-circle me-2"></i>Ejecutar Consulta SQL
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="sqlQuery" class="form-label">Consulta SQL (solo SELECT)</label>
-                    <textarea class="form-control" id="sqlQuery" rows="8" placeholder="SELECT * FROM despachos LIMIT 10;"></textarea>
+                    <textarea class="form-control query-editor" id="sqlQuery" rows="8" 
+                              placeholder="SELECT * FROM despachos LIMIT 10;"></textarea>
                     <div class="form-text">Solo se permiten consultas SELECT por seguridad.</div>
                 </div>
                 <div id="queryResult" style="display: none;">
                     <hr>
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h6 class="mb-0">Resultado:</h6>
-                        <small class="text-muted">
+                        <small class="query-stats">
                             <span id="queryStats"></span>
                         </small>
                     </div>
-                    <div class="table-responsive" style="max-height: 300px;">
-                        <table class="table table-sm table-bordered" id="queryResultTable">
-                            <thead class="table-light"></thead>
+                    <div class="table-responsive table-responsive-mobile" style="max-height: 300px;">
+                        <table class="table table-sm table-bordered query-result-table" id="queryResultTable">
+                            <thead></thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="executeQuery()">
+            <div class="modal-footer btn-group-mobile">
+                <button type="button" class="btn btn-secondary btn-corporate" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary btn-corporate" onclick="executeQuery()">
                     <i class="bi bi-play-circle me-2"></i>Ejecutar
                 </button>
             </div>
@@ -372,7 +390,7 @@ let currentSchema = null;
 let currentPage = 1;
 let currentPageSize = 50;
 
-// ==================== FUNCIONES DE USUARIOS (CÓDIGO ORIGINAL) ====================
+// ==================== FUNCIONES DE USUARIOS ====================
 document.addEventListener('DOMContentLoaded', function() {
     loadUsers();
     
@@ -399,24 +417,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function showAlert(message, type = 'danger') {
-    const alertContainer = document.getElementById('alertContainer');
-    const alertClass = type === 'success' ? 'success' : 'danger';
-    
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${alertClass} alert-dismissible fade show`;
-    alert.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    alertContainer.appendChild(alert);
-    
-    setTimeout(() => {
-        alert.remove();
-    }, 5000);
-}
-
 async function loadUsers() {
     try {
         const response = await fetch('/api/admin/users');
@@ -433,8 +433,9 @@ async function loadUsers() {
         
     } catch (error) {
         console.error('Error:', error);
+        showAlert('Error cargando usuarios. Por favor, recarga la página.', 'error');
         document.getElementById('usersTableBody').innerHTML = 
-            '<tr><td colspan="5" class="text-center text-danger">Error cargando usuarios. Por favor, recarga la página.</td></tr>';
+            '<tr><td colspan="5" class="text-center text-danger py-4">Error cargando usuarios</td></tr>';
     }
 }
 
@@ -442,27 +443,39 @@ function displayUsers(users) {
     const tbody = document.getElementById('usersTableBody');
     
     if (users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay usuarios</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No hay usuarios</td></tr>';
         return;
     }
     
     tbody.innerHTML = users.map(user => `
         <tr>
-            <td><strong>${user.username}</strong></td>
-            <td>${user.email || 'N/A'}</td>
             <td>
+                <strong class="text-corporate-primary">${user.username}</strong>
+                <div class="d-md-none">
+                    <small class="text-muted">${user.email || 'N/A'}</small>
+                </div>
+                <div class="d-lg-none mt-1">
+                    ${user.groups ? user.groups.map(group => 
+                        `<span class="badge bg-secondary me-1">${group.split('/')[1] || group}</span>`
+                    ).join(' ') : ''}
+                </div>
+            </td>
+            <td class="d-none d-md-table-cell">${user.email || 'N/A'}</td>
+            <td class="d-none d-lg-table-cell">
                 ${user.groups ? user.groups.map(group => 
-                    `<span class="badge bg-secondary">${group}</span>`
+                    `<span class="badge bg-secondary me-1">${group}</span>`
                 ).join(' ') : ''}
             </td>
             <td><span class="badge bg-success">Activo</span></td>
             <td>
-                <button class="btn btn-sm btn-primary me-1" onclick="editUser('${user.username}')">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.username}')">
-                    <i class="bi bi-trash"></i>
-                </button>
+                <div class="btn-group-corporate">
+                    <button class="btn btn-sm btn-primary btn-sm-corporate me-1" onclick="editUser('${user.username}')" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-sm-corporate" onclick="deleteUser('${user.username}')" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             </td>
         </tr>
     `).join('');
@@ -495,7 +508,7 @@ async function editUser(username) {
         
         const user = await response.json();
         
-        document.getElementById('modalTitle').textContent = 'Editar Usuario';
+        document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil me-2"></i>Editar Usuario';
         document.getElementById('editMode').value = 'true';
         document.getElementById('originalUsername').value = username;
         document.getElementById('username').value = user.username;
@@ -517,7 +530,7 @@ async function editUser(username) {
         modal.show();
         
     } catch (error) {
-        showAlert('Error cargando datos del usuario', 'danger');
+        showAlert('Error cargando datos del usuario', 'error');
     }
 }
 
@@ -540,14 +553,14 @@ async function deleteUser(username) {
         loadUsers();
         
     } catch (error) {
-        showAlert(error.message, 'danger');
+        showAlert(error.message, 'error');
     }
 }
 
 // Reset form when modal opens for new user
 document.getElementById('userModal').addEventListener('show.bs.modal', function (event) {
     if (!document.getElementById('editMode').value || document.getElementById('editMode').value === 'false') {
-        document.getElementById('modalTitle').textContent = 'Nuevo Usuario';
+        document.getElementById('modalTitle').innerHTML = '<i class="bi bi-person-plus me-2"></i>Nuevo Usuario';
         document.getElementById('userForm').reset();
         document.getElementById('editMode').value = 'false';
         document.getElementById('password').required = true;
@@ -603,7 +616,7 @@ document.getElementById('userForm').addEventListener('submit', async function(e)
         loadUsers();
         
     } catch (error) {
-        showAlert(error.message, 'danger');
+        showAlert(error.message, 'error');
     }
 });
 
@@ -625,6 +638,7 @@ async function loadDatabaseExplorer() {
         
     } catch (error) {
         console.error('Error:', error);
+        showAlert('Error cargando base de datos', 'error');
         document.getElementById('databaseTree').innerHTML = 
             '<div class="list-group-item text-center text-danger">Error cargando base de datos</div>';
     }
@@ -659,7 +673,7 @@ function displayDatabaseTree(schemas) {
     schemas.forEach(schema => {
         html += `
             <div class="list-group-item p-0">
-                <div class="d-flex align-items-center p-2 fw-bold text-primary" 
+                <div class="d-flex align-items-center p-2 fw-bold text-corporate-primary" 
                      style="cursor: pointer;" onclick="toggleSchema('${schema.name}')">
                     <i class="bi bi-chevron-right me-2 schema-toggle" id="toggle-${schema.name}"></i>
                     <i class="bi bi-database me-2"></i>
@@ -673,7 +687,7 @@ function displayDatabaseTree(schemas) {
                 <div class="list-group-item ps-5 py-2 table-item" 
                      style="cursor: pointer; border-left: 3px solid transparent;"
                      onclick="selectTable('${schema.name}', '${table}')"
-                     onmouseover="this.style.borderLeftColor='#3498db'"
+                     onmouseover="this.style.borderLeftColor='var(--primary-color)'"
                      onmouseout="this.style.borderLeftColor='transparent'">
                     <i class="bi bi-table me-2 text-muted"></i>
                     ${table}
@@ -751,6 +765,7 @@ async function loadTableData(page = 1, pageSize = 50) {
         
     } catch (error) {
         console.error('Error:', error);
+        showAlert('Error cargando datos de la tabla', 'error');
         document.getElementById('dataTable').innerHTML = 
             '<tr><td colspan="100%" class="text-center text-danger">Error cargando datos</td></tr>';
     }
@@ -811,7 +826,9 @@ function updateTablePagination(data) {
     // Botón anterior
     html += `
         <li class="page-item ${data.page <= 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${data.page - 1})">Anterior</a>
+            <a class="page-link" href="#" onclick="changePage(${data.page - 1})">
+                <i class="bi bi-chevron-left"></i>
+            </a>
         </li>
     `;
     
@@ -830,7 +847,9 @@ function updateTablePagination(data) {
     // Botón siguiente
     html += `
         <li class="page-item ${data.page >= data.total_pages ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${data.page + 1})">Siguiente</a>
+            <a class="page-link" href="#" onclick="changePage(${data.page + 1})">
+                <i class="bi bi-chevron-right"></i>
+            </a>
         </li>
     `;
     
@@ -868,6 +887,7 @@ async function showTableInfo() {
         
     } catch (error) {
         console.error('Error:', error);
+        showAlert('Error cargando información de la tabla', 'error');
         document.getElementById('tableInfoView').innerHTML = 
             '<div class="text-center text-danger">Error cargando información</div>';
     }
@@ -880,28 +900,31 @@ function displayTableInfo(info) {
     
     let html = `
         <div class="row mb-4">
-            <div class="col-md-6">
-                <h5>Información General</h5>
-                <table class="table table-sm">
-                    <tr><td><strong>Nombre:</strong></td><td>${info.name}</td></tr>
-                    <tr><td><strong>Esquema:</strong></td><td>${info.schema}</td></tr>
-                    <tr><td><strong>Filas:</strong></td><td>${info.row_count.toLocaleString()}</td></tr>
-                    <tr><td><strong>Columnas:</strong></td><td>${info.columns.length}</td></tr>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <h5>Columnas</h5>
-                <div style="max-height: 300px; overflow-y: auto;">
+            <div class="col-lg-6 mb-4">
+                <div class="table-info-section">
+                    <h5><i class="bi bi-info-circle me-2"></i>Información General</h5>
                     <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Tipo</th>
-                                <th>Nulo</th>
-                                <th>PK</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                        <tr><td><strong>Nombre:</strong></td><td>${info.name}</td></tr>
+                        <tr><td><strong>Esquema:</strong></td><td>${info.schema}</td></tr>
+                        <tr><td><strong>Filas:</strong></td><td>${info.row_count.toLocaleString()}</td></tr>
+                        <tr><td><strong>Columnas:</strong></td><td>${info.columns.length}</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="table-info-section">
+                    <h5><i class="bi bi-list-columns me-2"></i>Columnas</h5>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Nulo</th>
+                                    <th>PK</th>
+                                </tr>
+                            </thead>
+                            <tbody>
     `;
     
     info.columns.forEach(col => {
@@ -911,16 +934,17 @@ function displayTableInfo(info) {
         html += `
             <tr ${isPrimaryKey ? 'class="table-warning"' : ''}>
                 <td><code>${col.name}</code> ${pkIcon}</td>
-                <td><span class="badge bg-info">${col.type}</span></td>
-                <td>${col.nullable ? '<span class="badge bg-warning">Sí</span>' : '<span class="badge bg-success">No</span>'}</td>
+                <td><span class="column-type-badge">${col.type}</span></td>
+                <td>${col.nullable ? '<span class="nullable-badge">Sí</span>' : '<span class="not-null-badge">No</span>'}</td>
                 <td>${isPrimaryKey ? '<i class="bi bi-check-circle text-success"></i>' : ''}</td>
             </tr>
         `;
     });
     
     html += `
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -928,8 +952,8 @@ function displayTableInfo(info) {
     
     if (info.indexes && info.indexes.length > 0) {
         html += `
-            <div class="mb-4">
-                <h5>Índices</h5>
+            <div class="table-info-section">
+                <h5><i class="bi bi-speedometer me-2"></i>Índices</h5>
                 <div class="row">
                     ${info.indexes.map(idx => `
                         <div class="col-md-6 mb-2">
@@ -937,22 +961,6 @@ function displayTableInfo(info) {
                                 <small class="text-muted">Índice</small>
                                 <strong>${idx}</strong>
                             </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-    
-    if (info.constraints && info.constraints.length > 0) {
-        html += `
-            <div class="mb-4">
-                <h5>Restricciones</h5>
-                <div class="list-group">
-                    ${info.constraints.map(constraint => `
-                        <div class="list-group-item">
-                            <small class="text-muted d-block">Constraint</small>
-                            <code>${constraint}</code>
                         </div>
                     `).join('')}
                 </div>
@@ -983,6 +991,7 @@ async function showTableSchema() {
         
     } catch (error) {
         console.error('Error:', error);
+        showAlert('Error cargando esquema de la tabla', 'error');
         document.getElementById('schemaCode').textContent = 'Error cargando esquema';
     }
     
@@ -993,7 +1002,7 @@ async function executeQuery() {
     const query = document.getElementById('sqlQuery').value.trim();
     
     if (!query) {
-        alert('Por favor, ingrese una consulta SQL');
+        showAlert('Por favor, ingrese una consulta SQL', 'warning');
         return;
     }
     
@@ -1015,7 +1024,7 @@ async function executeQuery() {
         displayQueryResult(result);
         
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('Error: ' + error.message, 'error');
     }
 }
 

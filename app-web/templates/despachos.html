@@ -7,9 +7,9 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>Gestión de Despachos</h1>
-                <button class="btn btn-primary d-none" id="btnVolver" onclick="volverALista()">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h1 class="text-corporate-secondary">Gestión de Despachos</h1>
+                <button class="btn btn-primary btn-corporate d-none" id="btnVolver" onclick="volverALista()">
                     <i class="bi bi-arrow-left me-2"></i>Volver a la lista
                 </button>
             </div>
@@ -18,45 +18,55 @@
     
     <!-- List View -->
     <div id="despachosList">
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div>
-                        <span class="badge bg-info fs-6" id="totalDespachos">Total: 0</span>
+        <div class="card card-corporate">
+            <div class="card-header card-header-corporate">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-box-seam fs-5"></i>
+                            <span class="badge bg-white bg-opacity-25 text-white fs-6" id="totalDespachos">Total: 0</span>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <div class="input-group" style="width: 300px;">
-                            <input type="text" class="form-control" placeholder="Número de despacho..." id="searchInput">
-                            <button class="btn btn-outline-secondary" onclick="buscarDespachoEspecifico()">
-                                <i class="bi bi-search"></i>
+                    <div class="col-md-8">
+                        <div class="d-flex gap-2 justify-content-md-end flex-wrap">
+                            <div class="input-group" style="max-width: 300px;">
+                                <input type="text" class="form-control" 
+                                       placeholder="Número de despacho..." id="searchInput"
+                                       style="background: rgba(255,255,255,0.9); border: none;">
+                                <button class="btn btn-light" onclick="buscarDespachoEspecifico()" 
+                                        style="border: none; background: rgba(255,255,255,0.9);">
+                                    <i class="bi bi-search text-primary"></i>
+                                </button>
+                            </div>
+                            <button class="btn btn-light btn-corporate" onclick="nuevoDespacho()"
+                                    style="background: rgba(255,255,255,0.9); border: none; color: var(--primary-color); font-weight: 600;">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                <span class="d-none d-sm-inline">Nuevo Despacho</span>
+                                <span class="d-inline d-sm-none">Nuevo</span>
                             </button>
                         </div>
-                        <button class="btn btn-primary" onclick="nuevoDespacho()">
-                            <i class="bi bi-plus-circle me-2"></i>Nuevo Despacho
-                        </button>
                     </div>
                 </div>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                <div class="table-responsive table-responsive-corporate">
+                    <table class="table table-corporate table-hover mb-0">
                         <thead>
                             <tr>
                                 <th>Número</th>
-                                <th>Estado</th>
+                                <th class="d-none d-md-table-cell">Estado</th>
                                 <th>Progreso</th>
-                                <th>Documentos</th>
-                                <th>Creación</th>
-                                <th>Actualización</th>
+                                <th class="d-none d-lg-table-cell">Documentos</th>
+                                <th class="d-none d-xl-table-cell">Creación</th>
+                                <th class="d-none d-xl-table-cell">Actualización</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="despachosTableBody">
                             <tr>
                                 <td colspan="7" class="text-center py-4">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Cargando...</span>
-                                    </div>
+                                    <div class="loading-spinner"></div>
+                                    <span class="ms-2">Cargando...</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -73,17 +83,26 @@
     
     <!-- Detail View -->
     <div id="despachoDetail" class="d-none">
-        <div class="card">
+        <div class="card card-corporate">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#resumen">Resumen</a>
+                        <a class="nav-link active" data-bs-toggle="tab" href="#resumen">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <span class="d-none d-sm-inline">Resumen</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#documentos">Documentos</a>
+                        <a class="nav-link" data-bs-toggle="tab" href="#documentos">
+                            <i class="bi bi-file-text me-1"></i>
+                            <span class="d-none d-sm-inline">Documentos</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#datos">Datos</a>
+                        <a class="nav-link" data-bs-toggle="tab" href="#datos">
+                            <i class="bi bi-database me-1"></i>
+                            <span class="d-none d-sm-inline">Datos</span>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -99,21 +118,23 @@
 </div>
 
 <!-- New Despacho Modal -->
-<div class="modal fade" id="nuevoDespachoModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade modal-corporate" id="nuevoDespachoModal" tabindex="-1">
+    <div class="modal-dialog modal-mobile">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Crear Nuevo Despacho</h5>
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Despacho
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="nuevoDespachoForm">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Número de Despacho</label>
-                        <input type="text" class="form-control" id="nuevoNumero" required>
+                        <input type="text" class="form-control form-control-corporate" id="nuevoNumero" required>
                     </div>
-                    <div class="alert alert-info">
-                        <h6>Documentos Requeridos:</h6>
+                    <div class="alert alert-info border-radius-corporate">
+                        <h6><i class="bi bi-info-circle me-2"></i>Documentos Requeridos:</h6>
                         <ul class="mb-0">
                             <li>Factura Comercial</li>
                             <li>Documento de Transporte</li>
@@ -121,8 +142,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Crear</button>
+                    <button type="button" class="btn btn-secondary btn-corporate" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-corporate">
+                        <i class="bi bi-check me-2"></i>Crear
+                    </button>
                 </div>
             </form>
         </div>
@@ -130,16 +153,18 @@
 </div>
 
 <!-- Upload Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade modal-corporate" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-mobile">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Subir Documentos</h5>
+                <h5 class="modal-title">
+                    <i class="bi bi-cloud-upload me-2"></i>Subir Documentos
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-                    <i class="bi bi-cloud-upload fs-1"></i>
+                    <i class="bi bi-cloud-upload fs-1 text-corporate-primary"></i>
                     <p class="mt-2">Arrastra archivos aquí o haz clic para seleccionar</p>
                     <small class="text-muted">Solo archivos PDF hasta 10MB</small>
                 </div>
@@ -148,7 +173,7 @@
                 
                 <div class="mt-3">
                     <label class="form-label">Tipo de Documento</label>
-                    <select class="form-select" id="tipoDocumento">
+                    <select class="form-select form-select-corporate" id="tipoDocumento">
                         <option value="factura_comercial">Factura Comercial</option>
                         <option value="documento_transporte">Documento de Transporte</option>
                         <option value="packing_list">Lista de Empaque</option>
@@ -157,7 +182,7 @@
                     </select>
                 </div>
                 
-                <div class="alert alert-info mt-3 d-none" id="filePreview">
+                <div class="alert alert-info mt-3 d-none border-radius-corporate" id="filePreview">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-file-pdf fs-2 text-danger me-3"></i>
                         <div>
@@ -170,9 +195,11 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="uploadBtn" onclick="subirArchivo()" disabled>Subir Documento</button>
+            <div class="modal-footer btn-group-mobile">
+                <button type="button" class="btn btn-secondary btn-corporate" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-corporate" id="uploadBtn" onclick="subirArchivo()" disabled>
+                    <i class="bi bi-upload me-2"></i>Subir Documento
+                </button>
             </div>
         </div>
     </div>
@@ -221,12 +248,12 @@ function setupDragAndDrop() {
 
 function handleFileSelection(file) {
     if (file.type !== 'application/pdf') {
-        alert('Solo se permiten archivos PDF');
+        showAlert('Solo se permiten archivos PDF', 'warning');
         return;
     }
     
     if (file.size > 10 * 1024 * 1024) {
-        alert('El archivo no puede ser mayor a 10MB');
+        showAlert('El archivo no puede ser mayor a 10MB', 'warning');
         return;
     }
     
@@ -257,6 +284,7 @@ async function cargarDespachos(page = 1) {
         
     } catch (error) {
         console.error('Error:', error);
+        showAlert('Error cargando despachos', 'error');
         mostrarError('Error cargando despachos');
     }
 }
@@ -270,20 +298,40 @@ function mostrarDespachos(despachos) {
     }
     
     tbody.innerHTML = despachos.map(despacho => `
-        <tr onclick="seleccionarDespacho('${despacho.numero_despacho}')" style="cursor: pointer;">
-            <td><strong>${despacho.numero_despacho}</strong></td>
-            <td><span class="badge status-${despacho.estado}">${despacho.estado.toUpperCase()}</span></td>
+        <tr onclick="seleccionarDespacho('${despacho.numero_despacho}')" style="cursor: pointer;" class="table-row-hover">
             <td>
-                <div class="progress progress-mini">
-                    <div class="progress-bar progress-mini-fill" style="width: ${despacho.porcentaje_completitud}%"></div>
+                <strong class="text-corporate-primary">${despacho.numero_despacho}</strong>
+                <div class="d-md-none">
+                    <small class="text-muted">
+                        <span class="badge status-${despacho.estado}">${despacho.estado.toUpperCase()}</span>
+                    </small>
                 </div>
-                <small>${despacho.porcentaje_completitud.toFixed(0)}%</small>
             </td>
-            <td>${despacho.documentos_presentes}/${despacho.documentos_requeridos}</td>
-            <td>${new Date(despacho.fecha_creacion).toLocaleDateString()}</td>
-            <td>${new Date(despacho.fecha_actualizacion).toLocaleDateString()}</td>
+            <td class="d-none d-md-table-cell">
+                <span class="badge status-${despacho.estado}">${despacho.estado.toUpperCase()}</span>
+            </td>
             <td>
-                <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDespacho('${despacho.numero_despacho}')">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="progress progress-mini">
+                        <div class="progress-bar progress-mini-fill" style="width: ${despacho.porcentaje_completitud}%"></div>
+                    </div>
+                    <small class="text-corporate-secondary">${despacho.porcentaje_completitud.toFixed(0)}%</small>
+                </div>
+                <div class="d-lg-none">
+                    <small class="text-muted">${despacho.documentos_presentes}/${despacho.documentos_requeridos} docs</small>
+                </div>
+            </td>
+            <td class="d-none d-lg-table-cell">
+                <span class="badge bg-light text-dark">${despacho.documentos_presentes}/${despacho.documentos_requeridos}</span>
+            </td>
+            <td class="d-none d-xl-table-cell">
+                <small class="text-muted">${new Date(despacho.fecha_creacion).toLocaleDateString()}</small>
+            </td>
+            <td class="d-none d-xl-table-cell">
+                <small class="text-muted">${new Date(despacho.fecha_actualizacion).toLocaleDateString()}</small>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-primary btn-sm-corporate" onclick="event.stopPropagation(); verDespacho('${despacho.numero_despacho}')" title="Ver detalles">
                     <i class="bi bi-eye"></i>
                 </button>
             </td>
@@ -298,8 +346,16 @@ function actualizarPaginacion(total, currentPageNum) {
     const pagination = document.getElementById('pagination');
     let html = '';
     
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    
     html += `<li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" onclick="cargarDespachos(${currentPage - 1})">Anterior</a>
+        <a class="page-link" href="#" onclick="cargarDespachos(${currentPage - 1})">
+            <i class="bi bi-chevron-left"></i>
+            <span class="d-none d-sm-inline ms-1">Anterior</span>
+        </a>
     </li>`;
     
     const startPage = Math.max(1, currentPage - 2);
@@ -312,7 +368,10 @@ function actualizarPaginacion(total, currentPageNum) {
     }
     
     html += `<li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" onclick="cargarDespachos(${currentPage + 1})">Siguiente</a>
+        <a class="page-link" href="#" onclick="cargarDespachos(${currentPage + 1})">
+            <span class="d-none d-sm-inline me-1">Siguiente</span>
+            <i class="bi bi-chevron-right"></i>
+        </a>
     </li>`;
     
     pagination.innerHTML = html;
@@ -330,87 +389,112 @@ async function seleccionarDespacho(numero) {
         
     } catch (error) {
         console.error('Error:', error);
-        alert('Error cargando el despacho: ' + error.message);
+        showAlert('Error cargando el despacho: ' + error.message, 'error');
     }
 }
 
 async function cargarDetalleDespacho(numero) {
-    const [estado, documentos, datos] = await Promise.all([
-        fetch(`/api/despachos/${numero}/estado`).then(r => r.json()),
-        fetch(`/api/despachos/${numero}/documentos`).then(r => r.json()),
-        fetch(`/api/despachos/${numero}/datos`).then(r => r.json())
-    ]);
-    
-    mostrarDetalleResumen(estado);
-    mostrarDetalleDocumentos(documentos);
-    mostrarDetalleDatos(datos);
+    try {
+        const [estado, documentos, datos] = await Promise.all([
+            fetch(`/api/despachos/${numero}/estado`).then(r => r.json()),
+            fetch(`/api/despachos/${numero}/documentos`).then(r => r.json()),
+            fetch(`/api/despachos/${numero}/datos`).then(r => r.json())
+        ]);
+        
+        mostrarDetalleResumen(estado);
+        mostrarDetalleDocumentos(documentos);
+        mostrarDetalleDatos(datos);
+    } catch (error) {
+        throw new Error('Error cargando detalles del despacho');
+    }
 }
 
 function mostrarDetalleResumen(estado) {
     document.getElementById('resumen').innerHTML = `
-        <h3 class="mb-4">Despacho: ${estado.numero_despacho}</h3>
-        <div class="row g-3">
+        <div class="row mb-4">
+            <div class="col">
+                <h3 class="text-corporate-secondary mb-0">
+                    <i class="bi bi-box-seam me-2"></i>Despacho: ${estado.numero_despacho}
+                </h3>
+            </div>
+        </div>
+        
+        <div class="row g-3 stats-mobile">
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
+                <div class="card stat-card shadow-corporate">
+                    <div class="card-body text-center stat-card-mobile">
                         <h6 class="text-muted mb-3">Estado</h6>
                         <span class="badge status-${estado.estado} fs-6">${estado.estado.toUpperCase()}</span>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
+                <div class="card stat-card shadow-corporate">
+                    <div class="card-body text-center stat-card-mobile">
                         <h6 class="text-muted mb-3">Completitud</h6>
-                        <h4 class="mb-0" style="color: #3498db;">${estado.porcentaje_completitud.toFixed(0)}%</h4>
+                        <h2 class="text-corporate-primary">${estado.porcentaje_completitud.toFixed(0)}%</h2>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
+                <div class="card stat-card shadow-corporate">
+                    <div class="card-body text-center stat-card-mobile">
                         <h6 class="text-muted mb-3">Documentos</h6>
-                        <h4 class="mb-0">${estado.documentos_presentes.length}/${estado.documentos_requeridos.length}</h4>
+                        <h2 class="text-corporate-secondary">${estado.documentos_presentes.length}/${estado.documentos_requeridos.length}</h2>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mt-4">
-            <button class="btn btn-primary me-2" onclick="sincronizarSGD()">
-                <i class="bi bi-arrow-repeat me-2"></i>Sincronizar SGD
-            </button>
-            <button class="btn btn-success" onclick="procesarDespacho()">
-                <i class="bi bi-gear me-2"></i>Procesar
-            </button>
+        
+        <div class="mt-4 actions-mobile">
+            <div class="btn-group-corporate d-flex gap-2 flex-wrap">
+                <button class="btn btn-primary btn-corporate" onclick="sincronizarSGD()">
+                    <i class="bi bi-arrow-repeat me-2"></i>Sincronizar SGD
+                </button>
+                <button class="btn btn-success btn-corporate" onclick="procesarDespacho()">
+                    <i class="bi bi-gear me-2"></i>Procesar
+                </button>
+            </div>
         </div>
     `;
 }
 
 function mostrarDetalleDocumentos(documentos) {
     let html = `
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4>Documentos del Despacho</h4>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                <i class="bi bi-cloud-upload me-2"></i>Subir Documentos
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h4 class="text-corporate-secondary mb-0">
+                <i class="bi bi-file-text me-2"></i>Documentos del Despacho
+            </h4>
+            <button class="btn btn-success btn-corporate" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <i class="bi bi-cloud-upload me-2"></i>
+                <span class="d-none d-sm-inline">Subir Documentos</span>
+                <span class="d-inline d-sm-none">Subir</span>
             </button>
         </div>
     `;
     
     if (documentos.length === 0) {
-        html += '<p class="text-center text-muted">No hay documentos cargados</p>';
+        html += `
+            <div class="text-center py-5">
+                <i class="bi bi-file-text fs-1 text-muted"></i>
+                <p class="text-muted mt-2">No hay documentos cargados</p>
+            </div>
+        `;
     } else {
         html += '<div class="row">';
         documentos.forEach(doc => {
             html += `
                 <div class="col-md-6 mb-3">
-                    <div class="card">
+                    <div class="card card-responsive shadow-corporate">
                         <div class="card-body">
-                            <h6>${doc.tipo_documento.replace(/_/g, ' ').toUpperCase()}</h6>
-                            <span class="badge ${doc.procesado ? 'bg-success' : 'bg-warning'}">
-                                ${doc.procesado ? 'Procesado' : 'Pendiente'}
-                            </span>
-                            <p class="text-muted mt-2 mb-2">${doc.nombre_archivo}</p>
-                            <button class="btn btn-sm btn-primary" onclick="verDocumento(${doc.id})">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="text-corporate-secondary mb-0">${doc.tipo_documento.replace(/_/g, ' ').toUpperCase()}</h6>
+                                <span class="badge ${doc.procesado ? 'bg-success' : 'bg-warning'}">
+                                    ${doc.procesado ? 'Procesado' : 'Pendiente'}
+                                </span>
+                            </div>
+                            <p class="text-muted small mb-3">${doc.nombre_archivo}</p>
+                            <button class="btn btn-sm btn-primary btn-sm-corporate" onclick="verDocumento(${doc.id})">
                                 <i class="bi bi-eye me-1"></i>Ver PDF
                             </button>
                         </div>
@@ -426,7 +510,12 @@ function mostrarDetalleDocumentos(documentos) {
 
 function mostrarDetalleDatos(datos) {
     if (!datos.datos_extraidos || Object.keys(datos.datos_extraidos).length === 0) {
-        document.getElementById('datos').innerHTML = '<p class="text-center text-muted">No hay datos procesados</p>';
+        document.getElementById('datos').innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-database fs-1 text-muted"></i>
+                <p class="text-muted mt-2">No hay datos procesados</p>
+            </div>
+        `;
         return;
     }
     
@@ -435,10 +524,11 @@ function mostrarDetalleDatos(datos) {
     
     for (const [tipo, datosDoc] of Object.entries(datos.datos_extraidos)) {
         html += `
-            <div class="accordion-item">
+            <div class="accordion-item border-radius-corporate mb-2">
                 <h2 class="accordion-header">
                     <button class="accordion-button ${index > 0 ? 'collapsed' : ''}" type="button" 
                             data-bs-toggle="collapse" data-bs-target="#collapse${index}">
+                        <i class="bi bi-file-text me-2"></i>
                         ${tipo.replace(/_/g, ' ').toUpperCase()}
                     </button>
                 </h2>
@@ -448,13 +538,14 @@ function mostrarDetalleDatos(datos) {
         `;
         
         if (datosDoc.all_fields) {
-            html += '<table class="table table-sm">';
+            html += '<div class="table-responsive table-responsive-mobile">';
+            html += '<table class="table table-sm table-mobile">';
             for (const [key, value] of Object.entries(datosDoc.all_fields)) {
                 if (value) {
-                    html += `<tr><td><strong>${key}:</strong></td><td>${value}</td></tr>`;
+                    html += `<tr><td class="fw-bold">${key}:</td><td>${value}</td></tr>`;
                 }
             }
-            html += '</table>';
+            html += '</table></div>';
         }
         
         html += '</div></div></div>';
@@ -485,12 +576,14 @@ async function sincronizarSGD() {
     if (!despachoSeleccionado) return;
     
     try {
+        showAlert('Sincronizando con SGD...', 'info');
         const response = await fetch(`/api/despachos/${despachoSeleccionado}/sgd`);
         const result = await response.json();
-        alert(`Sincronización completada. ${result.total || 0} documentos importados.`);
+        
+        showAlert(`Sincronización completada. ${result.total || 0} documentos importados.`, 'success');
         await cargarDetalleDespacho(despachoSeleccionado);
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('Error en la sincronización: ' + error.message, 'error');
     }
 }
 
@@ -498,19 +591,21 @@ async function procesarDespacho() {
     if (!despachoSeleccionado) return;
     
     try {
+        showAlert('Procesando documentos...', 'info');
         const response = await fetch(`/api/despachos/${despachoSeleccionado}/procesar`, { method: 'POST' });
         const result = await response.json();
-        alert(`Procesamiento completado. ${result.total_procesados} documentos procesados.`);
+        
+        showAlert(`Procesamiento completado. ${result.total_procesados} documentos procesados.`, 'success');
         await cargarDetalleDespacho(despachoSeleccionado);
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('Error en el procesamiento: ' + error.message, 'error');
     }
 }
 
 async function buscarDespachoEspecifico() {
     const numero = document.getElementById('searchInput').value.trim();
     if (!numero) {
-        alert('Ingrese un número de despacho');
+        showAlert('Ingrese un número de despacho', 'warning');
         return;
     }
     
@@ -519,15 +614,16 @@ async function buscarDespachoEspecifico() {
         
         if (response.status === 404) {
             if (confirm(`El despacho ${numero} no existe. ¿Desea importarlo desde SGD?`)) {
+                showAlert('Importando desde SGD...', 'info');
                 const sgdResponse = await fetch(`/api/despachos/${numero}/sgd`);
                 
                 if (sgdResponse.ok) {
                     const result = await sgdResponse.json();
-                    alert(`Importación completada. ${result.total || 0} documentos importados.`);
+                    showAlert(`Importación completada. ${result.total || 0} documentos importados.`, 'success');
                     await cargarDespachos(currentPage);
                     await seleccionarDespacho(numero);
                 } else {
-                    alert('Error importando desde SGD');
+                    showAlert('Error importando desde SGD', 'error');
                 }
             }
             return;
@@ -538,7 +634,7 @@ async function buscarDespachoEspecifico() {
         }
         
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('Error: ' + error.message, 'error');
     }
 }
 
@@ -567,17 +663,19 @@ document.getElementById('nuevoDespachoForm').addEventListener('submit', async fu
         bootstrap.Modal.getInstance(document.getElementById('nuevoDespachoModal')).hide();
         document.getElementById('nuevoDespachoForm').reset();
         
+        showAlert('Despacho creado exitosamente', 'success');
+        
         await cargarDespachos(currentPage);
         await seleccionarDespacho(numero);
         
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('Error: ' + error.message, 'error');
     }
 });
 
 async function subirArchivo() {
     if (!archivoSeleccionado || !despachoSeleccionado) {
-        alert('Selecciona un archivo primero');
+        showAlert('Selecciona un archivo primero', 'warning');
         return;
     }
     
@@ -589,7 +687,7 @@ async function subirArchivo() {
     try {
         document.getElementById('uploadProgress').style.width = '50%';
         document.getElementById('uploadBtn').disabled = true;
-        document.getElementById('uploadBtn').textContent = 'Subiendo...';
+        document.getElementById('uploadBtn').innerHTML = '<i class="bi bi-clock me-2"></i>Subiendo...';
         
         const response = await fetch(`/api/despachos/${despachoSeleccionado}/documento/subir`, {
             method: 'POST',
@@ -599,18 +697,18 @@ async function subirArchivo() {
         document.getElementById('uploadProgress').style.width = '100%';
         
         if (response.ok) {
-            alert('Documento subido exitosamente');
+            showAlert('Documento subido exitosamente', 'success');
             bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
             await cargarDetalleDespacho(despachoSeleccionado);
         } else {
-            alert('Error subiendo documento');
+            showAlert('Error subiendo documento', 'error');
         }
         
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('Error: ' + error.message, 'error');
     } finally {
         document.getElementById('uploadBtn').disabled = false;
-        document.getElementById('uploadBtn').textContent = 'Subir Documento';
+        document.getElementById('uploadBtn').innerHTML = '<i class="bi bi-upload me-2"></i>Subir Documento';
         document.getElementById('uploadProgress').style.width = '0%';
         document.getElementById('filePreview').classList.add('d-none');
         document.getElementById('fileInput').value = '';
