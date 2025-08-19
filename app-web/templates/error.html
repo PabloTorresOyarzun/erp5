@@ -189,19 +189,7 @@
 </style>
 
 <script>
-// Auto-redirect después de 10 segundos para errores 404
-{% if code == 404 %}
-setTimeout(function() {
-    showAlert('Redirigiendo al inicio...', 'info', 3000);
-    setTimeout(function() {
-        window.location.href = "{{ url_for('index') }}";
-    }, 3000);
-}, 10000);
-{% endif %}
-
-// Prevenir navegación hacia atrás a páginas con error
-{% if code in [403, 500] %}
-window.history.replaceState(null, null, "{{ url_for('index') }}");
-{% endif %}
+// Initialize error page functionality
+initErrorPage({{ code or 0 }}, "{{ url_for('index') }}");
 </script>
 {% endblock %}
