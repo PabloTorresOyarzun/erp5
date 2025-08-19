@@ -416,3 +416,506 @@ body.page-error .sidebar-toggle {
         margin-left: 60px;
     }
 }
+
+/* ==================== NAVBAR FIXES ==================== */
+.navbar-custom {
+    height: var(--navbar-height);
+    background-color: var(--secondary-dark);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0; /* Remove default padding */
+}
+
+.navbar-custom .container-fluid {
+    height: 100%;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-custom .navbar-brand {
+    color: white !important;
+    font-weight: 600;
+    font-size: 20px;
+    text-decoration: none;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-custom .user-info {
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: background 0.3s;
+    border: none;
+    line-height: 1;
+}
+
+.navbar-custom .user-info:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.btn-dashboard {
+    background: rgba(255,255,255,0.1);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.3s;
+    border: none;
+    line-height: 1;
+}
+
+.btn-dashboard:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar-toggle {
+    background: none !important;
+    border: none !important;
+    color: white !important;
+    padding: 8px !important;
+    line-height: 1;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255,255,255,0.1) !important;
+}
+
+/* Fix for dropdown in navbar */
+.navbar-custom .dropdown-toggle::after {
+    vertical-align: middle;
+}
+
+.navbar-custom .dropdown-menu {
+    top: 100% !important;
+    right: 0;
+    left: auto;
+}
+
+/* Ensure consistent spacing across all pages */
+body {
+    background-color: var(--light-gray);
+    padding-top: var(--navbar-height);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    margin: 0;
+}
+
+/* Fix for main content spacing */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - var(--navbar-height));
+    margin-top: 0; /* Ensure no extra top margin */
+}
+
+/* Estado inicial sin transición para evitar parpadeo */
+.main-content[style*="transition: none"] {
+    transition: none !important;
+}
+
+.main-content.full-width {
+    margin-left: 0;
+}
+
+.main-content.sidebar-collapsed {
+    margin-left: var(--sidebar-collapsed);
+}
+
+/* Responsive navbar fixes */
+@media (max-width: 768px) {
+    .navbar-custom .navbar-brand {
+        font-size: 16px;
+    }
+    
+    .navbar-custom .container-fluid {
+        padding: 0 15px;
+    }
+    
+    .navbar-custom .btn-dashboard {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-custom .navbar-brand {
+        font-size: 14px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* ==================== Database Explorer Styles ==================== */
+.database-explorer {
+    height: calc(100vh - 300px);
+    min-height: 500px;
+}
+
+.database-tree {
+    border-right: 1px solid var(--border-color);
+    background: white;
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+.schema-toggle {
+    transition: transform 0.2s ease;
+}
+
+.table-item {
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.table-item:hover {
+    background-color: #f8f9fa !important;
+    transform: translateX(2px);
+}
+
+.table-item.selected {
+    background-color: #e3f2fd !important;
+    border-left-color: var(--primary-color) !important;
+    font-weight: bold;
+}
+
+.content-panel {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.content-view {
+    min-height: 400px;
+}
+
+/* Tablas de datos */
+.data-table-container {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.data-table-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px;
+    font-size: 0.9rem;
+}
+
+.data-table-wrapper {
+    position: relative;
+}
+
+.data-table {
+    font-size: 0.85rem;
+}
+
+.data-table th {
+    background: #f8f9fa;
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table td {
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.data-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Información de tabla */
+.table-info-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.table-info-section h5 {
+    color: var(--secondary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+.column-type-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.nullable-badge {
+    background: #fff3e0;
+    color: #f57c00;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+}
+
+.not-null-badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+}
+
+/* Esquema SQL */
+.schema-view {
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-x: auto;
+}
+
+.schema-view code {
+    color: #333;
+    background: none;
+}
+
+/* Modal de consulta */
+.query-editor {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.query-result-table {
+    font-size: 0.8rem;
+    background: white;
+}
+
+.query-result-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    border: none;
+}
+
+.query-result-table td {
+    border: 1px solid #eee;
+}
+
+.query-stats {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Estadísticas de BD */
+.db-stat-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.db-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.db-stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 4px;
+}
+
+.db-stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* Navegación de pestañas mejorada */
+.admin-tabs .nav-link {
+    border: none;
+    background: none;
+    color: #666;
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+    border-radius: 8px 8px 0 0;
+    margin-right: 4px;
+}
+
+.admin-tabs .nav-link:hover {
+    background: #f8f9fa;
+    color: var(--primary-color);
+}
+
+.admin-tabs .nav-link.active {
+    background: white;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    font-weight: 600;
+}
+
+/* Paginación personalizada */
+.table-pagination .page-link {
+    border: none;
+    color: var(--primary-color);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.table-pagination .page-item.active .page-link {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.table-pagination .page-link:hover {
+    background: #e3f2fd;
+    color: var(--primary-color);
+}
+
+/* Responsive para explorador de BD */
+@media (max-width: 768px) {
+    .database-explorer {
+        height: auto;
+    }
+    
+    .database-tree {
+        max-height: 300px;
+        margin-bottom: 20px;
+    }
+    
+    .content-panel {
+        margin-top: 20px;
+    }
+    
+    .data-table {
+        font-size: 0.75rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 6px 8px;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .table-info-section {
+        padding: 15px;
+    }
+    
+    .query-editor {
+        font-size: 12px;
+    }
+}
+
+/* Animaciones suaves */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Estados de carga */
+.loading-placeholder {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    height: 20px;
+    margin: 4px 0;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Tooltips para datos truncados */
+.data-cell {
+    position: relative;
+    cursor: help;
+}
+
+.data-cell:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* Scroll personalizado para el explorador */
+.database-tree::-webkit-scrollbar,
+.data-table-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.database-tree::-webkit-scrollbar-track,
+.data-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.database-tree::-webkit-scrollbar-thumb,
+.data-table-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.database-tree::-webkit-scrollbar-thumb:hover,
+.data-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}

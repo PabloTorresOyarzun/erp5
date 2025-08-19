@@ -9,9 +9,14 @@
         <div class="col">
             <div class="d-flex justify-content-between align-items-center">
                 <h1>Panel de Administración</h1>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
-                    <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
-                </button>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal" id="newUserBtn">
+                        <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
+                    </button>
+                    <button class="btn btn-success" onclick="refreshDatabaseExplorer()" id="refreshDbBtn" style="display: none;">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Actualizar BD
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -19,75 +24,235 @@
     <!-- Alerts Container -->
     <div id="alertContainer"></div>
     
-    <!-- Stats -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-muted">Total Usuarios</h3>
-                    <h2 class="text-primary" id="totalUsers">0</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-muted">Usuarios Activos</h3>
-                    <h2 class="text-success" id="activeUsers">0</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-muted">Grupos</h3>
-                    <h2 class="text-info">11</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-muted">Roles</h3>
-                    <h2 class="text-warning">5</h2>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" 
+                    type="button" role="tab">
+                <i class="bi bi-people me-2"></i>Gestión de Usuarios
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database-pane" 
+                    type="button" role="tab">
+                <i class="bi bi-server me-2"></i>Explorador de Base de Datos
+            </button>
+        </li>
+    </ul>
     
-    <!-- Users Table -->
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Gestión de Usuarios</h5>
-                <div class="input-group" style="width: 300px;">
-                    <input type="text" class="form-control" placeholder="Buscar usuarios..." id="searchInput" onkeyup="filterUsers()">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
+        <!-- Users Tab -->
+        <div class="tab-pane fade show active" id="users-pane" role="tabpanel">
+            <!-- Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-muted">Total Usuarios</h3>
+                            <h2 class="text-primary" id="totalUsers">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-muted">Usuarios Activos</h3>
+                            <h2 class="text-success" id="activeUsers">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-muted">Grupos</h3>
+                            <h2 class="text-info">11</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="text-muted">Roles</h3>
+                            <h2 class="text-warning">5</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Gestión de Usuarios</h5>
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" class="form-control" placeholder="Buscar usuarios..." id="searchInput" onkeyup="filterUsers()">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Grupos</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Cargando...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover" id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Email</th>
-                            <th>Grupos</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <tr>
-                            <td colspan="5" class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
+        
+        <!-- Database Tab -->
+        <div class="tab-pane fade" id="database-pane" role="tabpanel">
+            <!-- Database Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="text-muted">Tamaño BD</h6>
+                            <h4 class="text-primary" id="dbSize">-</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="text-muted">Tablas</h6>
+                            <h4 class="text-info" id="dbTables">-</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="text-muted">Conexiones</h6>
+                            <h4 class="text-success" id="dbConnections">-</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="text-muted">Versión</h6>
+                            <small class="text-muted" id="dbVersion">-</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Database Explorer -->
+            <div class="row">
+                <!-- Database Tree (Left Panel) -->
+                <div class="col-lg-3">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-server me-2"></i>Explorador de BD
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush" id="databaseTree">
+                                <div class="list-group-item text-center py-3">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
                                 </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Panel (Right Panel) -->
+                <div class="col-lg-9">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0" id="contentTitle">
+                                    <i class="bi bi-table me-2"></i>Seleccione una tabla
+                                </h6>
+                                <div class="btn-group btn-group-sm" role="group" id="contentActions" style="display: none;">
+                                    <button class="btn btn-outline-primary" onclick="showTableData()" id="btnShowData">
+                                        <i class="bi bi-table"></i> Datos
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="showTableInfo()" id="btnShowInfo">
+                                        <i class="bi bi-info-circle"></i> Info
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="showTableSchema()" id="btnShowSchema">
+                                        <i class="bi bi-code"></i> Esquema
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <!-- Default View -->
+                            <div id="defaultView" class="p-4 text-center text-muted">
+                                <i class="bi bi-database" style="font-size: 48px;"></i>
+                                <p class="mt-3">Seleccione una tabla del explorador para ver su contenido</p>
+                                <div class="mt-4">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#queryModal">
+                                        <i class="bi bi-play-circle me-2"></i>Ejecutar Consulta SQL
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Table Data View -->
+                            <div id="tableDataView" style="display: none;">
+                                <div class="p-3 border-bottom">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <small class="text-muted">Mostrando registros <span id="recordsInfo">0</span></small>
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            <div class="btn-group btn-group-sm">
+                                                <select class="form-select form-select-sm" id="pageSizeSelect" onchange="changePageSize()" style="width: auto;">
+                                                    <option value="25">25</option>
+                                                    <option value="50" selected>50</option>
+                                                    <option value="100">100</option>
+                                                    <option value="200">200</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive" style="max-height: 600px;">
+                                    <table class="table table-sm table-hover mb-0" id="dataTable">
+                                        <thead class="table-light sticky-top"></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="p-3 border-top">
+                                    <nav>
+                                        <ul class="pagination pagination-sm justify-content-center mb-0" id="tablePagination"></ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            
+                            <!-- Table Info View -->
+                            <div id="tableInfoView" style="display: none;" class="p-4"></div>
+                            
+                            <!-- Table Schema View -->
+                            <div id="tableSchemaView" style="display: none;" class="p-0">
+                                <pre class="border-0 p-4 mb-0" style="background: #f8f9fa; font-size: 13px;"><code id="schemaCode"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -158,11 +323,80 @@
     </div>
 </div>
 
-<script>
-let allUsers = [];
+<!-- Query Modal -->
+<div class="modal fade" id="queryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ejecutar Consulta SQL</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="sqlQuery" class="form-label">Consulta SQL (solo SELECT)</label>
+                    <textarea class="form-control" id="sqlQuery" rows="8" placeholder="SELECT * FROM despachos LIMIT 10;"></textarea>
+                    <div class="form-text">Solo se permiten consultas SELECT por seguridad.</div>
+                </div>
+                <div id="queryResult" style="display: none;">
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Resultado:</h6>
+                        <small class="text-muted">
+                            <span id="queryStats"></span>
+                        </small>
+                    </div>
+                    <div class="table-responsive" style="max-height: 300px;">
+                        <table class="table table-sm table-bordered" id="queryResultTable">
+                            <thead class="table-light"></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="executeQuery()">
+                    <i class="bi bi-play-circle me-2"></i>Ejecutar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+// ==================== VARIABLES GLOBALES ====================
+let allUsers = [];
+let dbSchemas = [];
+let currentTable = null;
+let currentSchema = null;
+let currentPage = 1;
+let currentPageSize = 50;
+
+// ==================== FUNCIONES DE USUARIOS (CÓDIGO ORIGINAL) ====================
 document.addEventListener('DOMContentLoaded', function() {
     loadUsers();
+    
+    // Event listener para cambio de tabs
+    const tabs = document.querySelectorAll('#adminTabs button[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(event) {
+            const target = event.target.getAttribute('data-bs-target');
+            
+            // Mostrar/ocultar botones según la pestaña activa
+            if (target === '#users-pane') {
+                document.getElementById('newUserBtn').style.display = 'block';
+                document.getElementById('refreshDbBtn').style.display = 'none';
+            } else if (target === '#database-pane') {
+                document.getElementById('newUserBtn').style.display = 'none';
+                document.getElementById('refreshDbBtn').style.display = 'block';
+                
+                // Cargar explorador de BD si no se ha cargado
+                if (dbSchemas.length === 0) {
+                    loadDatabaseExplorer();
+                }
+            }
+        });
+    });
 });
 
 function showAlert(message, type = 'danger') {
@@ -372,5 +606,454 @@ document.getElementById('userForm').addEventListener('submit', async function(e)
         showAlert(error.message, 'danger');
     }
 });
+
+// ==================== FUNCIONES DE BASE DE DATOS ====================
+async function loadDatabaseExplorer() {
+    try {
+        // Cargar estadísticas
+        await loadDatabaseStats();
+        
+        // Cargar esquemas y tablas
+        const response = await fetch('/api/db/schemas');
+        
+        if (!response.ok) {
+            throw new Error('Error cargando esquemas de base de datos');
+        }
+        
+        dbSchemas = await response.json();
+        displayDatabaseTree(dbSchemas);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('databaseTree').innerHTML = 
+            '<div class="list-group-item text-center text-danger">Error cargando base de datos</div>';
+    }
+}
+
+async function loadDatabaseStats() {
+    try {
+        const response = await fetch('/api/db/stats');
+        
+        if (response.ok) {
+            const stats = await response.json();
+            document.getElementById('dbSize').textContent = stats.database_size;
+            document.getElementById('dbTables').textContent = stats.table_count;
+            document.getElementById('dbConnections').textContent = stats.active_connections;
+            document.getElementById('dbVersion').textContent = stats.postgresql_version.substring(0, 20);
+        }
+    } catch (error) {
+        console.error('Error loading database stats:', error);
+    }
+}
+
+function displayDatabaseTree(schemas) {
+    const tree = document.getElementById('databaseTree');
+    
+    if (schemas.length === 0) {
+        tree.innerHTML = '<div class="list-group-item text-center">No hay esquemas disponibles</div>';
+        return;
+    }
+    
+    let html = '';
+    
+    schemas.forEach(schema => {
+        html += `
+            <div class="list-group-item p-0">
+                <div class="d-flex align-items-center p-2 fw-bold text-primary" 
+                     style="cursor: pointer;" onclick="toggleSchema('${schema.name}')">
+                    <i class="bi bi-chevron-right me-2 schema-toggle" id="toggle-${schema.name}"></i>
+                    <i class="bi bi-database me-2"></i>
+                    ${schema.name} (${schema.total_tables})
+                </div>
+                <div class="schema-tables" id="tables-${schema.name}" style="display: none;">
+        `;
+        
+        schema.tables.forEach(table => {
+            html += `
+                <div class="list-group-item ps-5 py-2 table-item" 
+                     style="cursor: pointer; border-left: 3px solid transparent;"
+                     onclick="selectTable('${schema.name}', '${table}')"
+                     onmouseover="this.style.borderLeftColor='#3498db'"
+                     onmouseout="this.style.borderLeftColor='transparent'">
+                    <i class="bi bi-table me-2 text-muted"></i>
+                    ${table}
+                </div>
+            `;
+        });
+        
+        html += '</div></div>';
+    });
+    
+    tree.innerHTML = html;
+}
+
+function toggleSchema(schemaName) {
+    const tablesDiv = document.getElementById(`tables-${schemaName}`);
+    const toggleIcon = document.getElementById(`toggle-${schemaName}`);
+    
+    if (tablesDiv.style.display === 'none') {
+        tablesDiv.style.display = 'block';
+        toggleIcon.className = 'bi bi-chevron-down me-2 schema-toggle';
+    } else {
+        tablesDiv.style.display = 'none';
+        toggleIcon.className = 'bi bi-chevron-right me-2 schema-toggle';
+    }
+}
+
+async function selectTable(schema, tableName) {
+    currentTable = tableName;
+    currentSchema = schema;
+    
+    // Actualizar UI
+    document.getElementById('contentTitle').innerHTML = 
+        `<i class="bi bi-table me-2"></i>${schema}.${tableName}`;
+    document.getElementById('contentActions').style.display = 'block';
+    
+    // Highlight selected table
+    document.querySelectorAll('.table-item').forEach(item => {
+        item.style.backgroundColor = '';
+        item.style.fontWeight = '';
+    });
+    
+    event.target.style.backgroundColor = '#e3f2fd';
+    event.target.style.fontWeight = 'bold';
+    
+    // Cargar datos por defecto
+    showTableData();
+}
+
+async function showTableData() {
+    if (!currentTable || !currentSchema) return;
+    
+    // Ocultar otras vistas
+    document.getElementById('defaultView').style.display = 'none';
+    document.getElementById('tableInfoView').style.display = 'none';
+    document.getElementById('tableSchemaView').style.display = 'none';
+    
+    // Mostrar vista de datos
+    document.getElementById('tableDataView').style.display = 'block';
+    
+    await loadTableData(currentPage, currentPageSize);
+}
+
+async function loadTableData(page = 1, pageSize = 50) {
+    try {
+        const response = await fetch(
+            `/api/db/table/${currentSchema}/${currentTable}/data?page=${page}&page_size=${pageSize}`
+        );
+        
+        if (!response.ok) {
+            throw new Error('Error cargando datos de la tabla');
+        }
+        
+        const data = await response.json();
+        displayTableData(data);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('dataTable').innerHTML = 
+            '<tr><td colspan="100%" class="text-center text-danger">Error cargando datos</td></tr>';
+    }
+}
+
+function displayTableData(data) {
+    const table = document.getElementById('dataTable');
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
+    
+    // Actualizar información de registros
+    const start = (data.page - 1) * data.page_size + 1;
+    const end = Math.min(data.page * data.page_size, data.total_rows);
+    document.getElementById('recordsInfo').textContent = 
+        `${start}-${end} de ${data.total_rows}`;
+    
+    // Generar encabezados
+    thead.innerHTML = `
+        <tr>
+            ${data.columns.map(col => `<th>${col}</th>`).join('')}
+        </tr>
+    `;
+    
+    // Generar filas
+    if (data.rows.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="${data.columns.length}" class="text-center text-muted py-4">
+                    No hay datos en esta tabla
+                </td>
+            </tr>
+        `;
+    } else {
+        tbody.innerHTML = data.rows.map(row => `
+            <tr>
+                ${row.map(cell => `
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" 
+                        title="${cell || ''}">${cell || '<em class="text-muted">null</em>'}</td>
+                `).join('')}
+            </tr>
+        `).join('');
+    }
+    
+    // Actualizar paginación
+    updateTablePagination(data);
+}
+
+function updateTablePagination(data) {
+    const pagination = document.getElementById('tablePagination');
+    
+    if (data.total_pages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    
+    let html = '';
+    
+    // Botón anterior
+    html += `
+        <li class="page-item ${data.page <= 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${data.page - 1})">Anterior</a>
+        </li>
+    `;
+    
+    // Páginas
+    const startPage = Math.max(1, data.page - 2);
+    const endPage = Math.min(data.total_pages, data.page + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        html += `
+            <li class="page-item ${i === data.page ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+            </li>
+        `;
+    }
+    
+    // Botón siguiente
+    html += `
+        <li class="page-item ${data.page >= data.total_pages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${data.page + 1})">Siguiente</a>
+        </li>
+    `;
+    
+    pagination.innerHTML = html;
+}
+
+function changePage(page) {
+    currentPage = page;
+    loadTableData(currentPage, currentPageSize);
+}
+
+function changePageSize() {
+    currentPageSize = parseInt(document.getElementById('pageSizeSelect').value);
+    currentPage = 1;
+    loadTableData(currentPage, currentPageSize);
+}
+
+async function showTableInfo() {
+    if (!currentTable || !currentSchema) return;
+    
+    // Ocultar otras vistas
+    document.getElementById('defaultView').style.display = 'none';
+    document.getElementById('tableDataView').style.display = 'none';
+    document.getElementById('tableSchemaView').style.display = 'none';
+    
+    try {
+        const response = await fetch(`/api/db/table/${currentSchema}/${currentTable}`);
+        
+        if (!response.ok) {
+            throw new Error('Error cargando información de la tabla');
+        }
+        
+        const info = await response.json();
+        displayTableInfo(info);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('tableInfoView').innerHTML = 
+            '<div class="text-center text-danger">Error cargando información</div>';
+    }
+    
+    document.getElementById('tableInfoView').style.display = 'block';
+}
+
+function displayTableInfo(info) {
+    const infoView = document.getElementById('tableInfoView');
+    
+    let html = `
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h5>Información General</h5>
+                <table class="table table-sm">
+                    <tr><td><strong>Nombre:</strong></td><td>${info.name}</td></tr>
+                    <tr><td><strong>Esquema:</strong></td><td>${info.schema}</td></tr>
+                    <tr><td><strong>Filas:</strong></td><td>${info.row_count.toLocaleString()}</td></tr>
+                    <tr><td><strong>Columnas:</strong></td><td>${info.columns.length}</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5>Columnas</h5>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Nulo</th>
+                                <th>PK</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    `;
+    
+    info.columns.forEach(col => {
+        const isPrimaryKey = col.primary_key || false;
+        const pkIcon = isPrimaryKey ? '<i class="bi bi-key text-warning" title="Primary Key"></i>' : '';
+        
+        html += `
+            <tr ${isPrimaryKey ? 'class="table-warning"' : ''}>
+                <td><code>${col.name}</code> ${pkIcon}</td>
+                <td><span class="badge bg-info">${col.type}</span></td>
+                <td>${col.nullable ? '<span class="badge bg-warning">Sí</span>' : '<span class="badge bg-success">No</span>'}</td>
+                <td>${isPrimaryKey ? '<i class="bi bi-check-circle text-success"></i>' : ''}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    if (info.indexes && info.indexes.length > 0) {
+        html += `
+            <div class="mb-4">
+                <h5>Índices</h5>
+                <div class="row">
+                    ${info.indexes.map(idx => `
+                        <div class="col-md-6 mb-2">
+                            <div class="card card-body">
+                                <small class="text-muted">Índice</small>
+                                <strong>${idx}</strong>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    if (info.constraints && info.constraints.length > 0) {
+        html += `
+            <div class="mb-4">
+                <h5>Restricciones</h5>
+                <div class="list-group">
+                    ${info.constraints.map(constraint => `
+                        <div class="list-group-item">
+                            <small class="text-muted d-block">Constraint</small>
+                            <code>${constraint}</code>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    infoView.innerHTML = html;
+}
+
+async function showTableSchema() {
+    if (!currentTable || !currentSchema) return;
+    
+    // Ocultar otras vistas
+    document.getElementById('defaultView').style.display = 'none';
+    document.getElementById('tableDataView').style.display = 'none';
+    document.getElementById('tableInfoView').style.display = 'none';
+    
+    try {
+        const response = await fetch(`/api/db/table/${currentSchema}/${currentTable}/schema`);
+        
+        if (!response.ok) {
+            throw new Error('Error cargando esquema de la tabla');
+        }
+        
+        const schema = await response.json();
+        document.getElementById('schemaCode').textContent = schema.sql_definition;
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('schemaCode').textContent = 'Error cargando esquema';
+    }
+    
+    document.getElementById('tableSchemaView').style.display = 'block';
+}
+
+async function executeQuery() {
+    const query = document.getElementById('sqlQuery').value.trim();
+    
+    if (!query) {
+        alert('Por favor, ingrese una consulta SQL');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/db/query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: query })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Error ejecutando consulta');
+        }
+        
+        const result = await response.json();
+        displayQueryResult(result);
+        
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+function displayQueryResult(result) {
+    const resultDiv = document.getElementById('queryResult');
+    const statsDiv = document.getElementById('queryStats');
+    const table = document.getElementById('queryResultTable');
+    
+    // Mostrar estadísticas
+    statsDiv.textContent = `${result.affected_rows} filas - ${result.execution_time.toFixed(3)}s`;
+    
+    // Generar tabla
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
+    
+    if (result.columns.length === 0) {
+        thead.innerHTML = '';
+        tbody.innerHTML = '<tr><td class="text-center text-muted">No hay resultados</td></tr>';
+    } else {
+        thead.innerHTML = `
+            <tr>
+                ${result.columns.map(col => `<th>${col}</th>`).join('')}
+            </tr>
+        `;
+        
+        tbody.innerHTML = result.rows.map(row => `
+            <tr>
+                ${row.map(cell => `<td>${cell || '<em class="text-muted">null</em>'}</td>`).join('')}
+            </tr>
+        `).join('');
+    }
+    
+    resultDiv.style.display = 'block';
+}
+
+function refreshDatabaseExplorer() {
+    dbSchemas = [];
+    loadDatabaseExplorer();
+}
 </script>
 {% endblock %}

@@ -89,6 +89,22 @@ services:
       timeout: 5s
       retries: 5
 
+  api-database:
+    build: ./api-database
+    env_file:
+      - .env
+    ports:
+      - "8004:8004"
+    depends_on:
+      postgres-despachos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app-web:
     build: ./app-web
     env_file:
@@ -101,6 +117,8 @@ services:
       api-docs:
         condition: service_healthy
       api-despachos:
+        condition: service_healthy
+      api-database:
         condition: service_healthy
     restart: on-failure:5
     healthcheck:

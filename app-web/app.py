@@ -741,5 +741,117 @@ def after_request(response):
         response.headers["Expires"] = "0"
     return response
 
+# ==================== API ENDPOINTS PARA EXPLORADOR DE BASE DE DATOS ====================
+
+# URL de la API de base de datos
+DB_API_URL = "http://api-database:8004"
+
+@app.route('/api/db/schemas')
+@group_required('gerencia', 'informatico')
+def api_db_schemas():
+    """API: Obtener esquemas de la base de datos"""
+    try:
+        response = requests.get(f"{DB_API_URL}/db/schemas")
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Error obteniendo esquemas"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/db/table/<schema>/<table_name>')
+@group_required('gerencia', 'informatico')
+def api_db_table_info(schema, table_name):
+    """API: Obtener información de una tabla"""
+    try:
+        response = requests.get(f"{DB_API_URL}/db/table/{schema}/{table_name}")
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Error obteniendo información de tabla"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/db/table/<schema>/<table_name>/data')
+@group_required('gerencia', 'informatico')
+def api_db_table_data(schema, table_name):
+    """API: Obtener datos de una tabla"""
+    try:
+        # Pasar todos los parámetros de query
+        params = {
+            'page': request.args.get('page', 1, type=int),
+            'page_size': request.args.get('page_size', 50, type=int),
+            'order_by': request.args.get('order_by'),
+            'order_direction': request.args.get('order_direction', 'ASC')
+        }
+        
+        response = requests.get(
+            f"{DB_API_URL}/db/table/{schema}/{table_name}/data",
+            params=params
+        )
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Error obteniendo datos de tabla"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/db/table/<schema>/<table_name>/schema')
+@group_required('gerencia', 'informatico')
+def api_db_table_schema(schema, table_name):
+    """API: Obtener esquema SQL de una tabla"""
+    try:
+        response = requests.get(f"{DB_API_URL}/db/table/{schema}/{table_name}/schema")
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Error obteniendo esquema de tabla"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/db/query', methods=['POST'])
+@group_required('gerencia', 'informatico')
+def api_db_query():
+    """API: Ejecutar consulta SQL personalizada"""
+    try:
+        query_data = request.json
+        
+        response = requests.post(
+            f"{DB_API_URL}/db/query",
+            json=query_data
+        )
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            error_data = response.json()
+            return jsonify({"error": error_data.get('detail', 'Error ejecutando consulta')}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/db/stats')
+@group_required('gerencia', 'informatico')
+def api_db_stats():
+    """API: Obtener estadísticas de la base de datos"""
+    try:
+        response = requests.get(f"{DB_API_URL}/db/stats")
+        
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Error obteniendo estadísticas"}), response.status_code
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.getenv('FLASK_PORT', 5000)), debug=True)
