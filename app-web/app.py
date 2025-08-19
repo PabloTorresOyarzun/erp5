@@ -5,6 +5,7 @@ from datetime import timedelta
 from functools import wraps
 
 app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key')
 app.permanent_session_lifetime = timedelta(hours=10)
 

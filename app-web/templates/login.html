@@ -3,185 +3,44 @@
 {% block title %}Iniciar Sesión - Agencia de Aduanas ERP{% endblock %}
 
 {% block content %}
-<script>
-    // Limpiar estado del sidebar al cargar la página de login
-    document.addEventListener('DOMContentLoaded', function() {
-        localStorage.removeItem('sidebarCollapsed');
-    });
-</script>
-
-<style>
-    .login-container {
-        max-width: 400px;
-        margin: 80px auto;
-    }
-    
-    .login-box {
-        background: white;
-        border-radius: 8px;
-        padding: 40px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .login-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    
-    .login-header h1 {
-        color: #2c3e50;
-        margin-bottom: 10px;
-    }
-    
-    .login-header p {
-        color: #7f8c8d;
-    }
-    
-    .login-divider {
-        text-align: center;
-        margin: 30px 0;
-        position: relative;
-    }
-    
-    .login-divider:before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: #e0e0e0;
-    }
-    
-    .login-divider span {
-        background: white;
-        padding: 0 15px;
-        position: relative;
-        color: #7f8c8d;
-    }
-    
-    .test-users {
-        background: #f8f9fa;
-        border-radius: 4px;
-        padding: 20px;
-        margin-top: 20px;
-    }
-    
-    .test-users h3 {
-        color: #2c3e50;
-        margin-bottom: 15px;
-        font-size: 16px;
-    }
-    
-    .user-card {
-        background: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        padding: 10px;
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-    
-    .user-card:last-child {
-        margin-bottom: 0;
-    }
-    
-    .user-card strong {
-        color: #2c3e50;
-    }
-    
-    .keycloak-btn {
-        display: block;
-        width: 100%;
-        padding: 14px;
-        background: #3498db;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 16px;
-        font-weight: 500;
-        transition: background-color 0.3s;
-    }
-    
-    .keycloak-btn:hover {
-        background: #2980b9;
-    }
-    
-    @media (max-width: 768px) {
-        .login-container {
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        
-        .login-box {
-            padding: 30px 20px;
-        }
-        
-        .login-header h1 {
-            font-size: 24px;
-        }
-        
-        .test-users {
-            padding: 15px;
-        }
-        
-        .user-card {
-            font-size: 13px;
-            padding: 8px;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .login-container {
-            margin: 20px auto;
-        }
-        
-        .login-box {
-            padding: 20px 15px;
-        }
-        
-        .keycloak-btn {
-            font-size: 14px;
-            padding: 12px;
-        }
-    }
-</style>
-
-<div class="login-container">
-    <div class="login-box">
-        <div class="login-header">
-            <h1>Iniciar Sesión</h1>
-            <p>Accede al sistema ERP de la Agencia de Aduanas</p>
-        </div>
-        
-        <a href="{{ url_for('login') }}" class="keycloak-btn">
-            Iniciar Sesión con Keycloak
-        </a>
-        
-        <div class="login-divider">
-            <span>Usuarios de prueba</span>
-        </div>
-        
-        <div class="test-users">
-            <h3>Credenciales disponibles:</h3>
-            
-            <div class="user-card">
-                <strong>Informático</strong><br>
-                Usuario: test / Contraseña: test123<br>
-                <small style="color: #7f8c8d;">Permisos: read, write, update, delete</small>
-            </div>
-            
-            <div class="user-card">
-                <strong>Gerente General</strong><br>
-                Usuario: gerente / Contraseña: gerente123<br>
-                <small style="color: #7f8c8d;">Permisos: todos</small>
-            </div>
-            
-            <div class="user-card">
-                <strong>Cliente</strong><br>
-                Usuario: cliente / Contraseña: cliente123<br>
-                <small style="color: #7f8c8d;">Permisos: read</small>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h1 class="h3">Iniciar Sesión</h1>
+                        <p class="text-muted">Accede al sistema ERP de la Agencia de Aduanas</p>
+                    </div>
+                    
+                    <a href="{{ url_for('login') }}" class="btn btn-primary w-100 mb-3">
+                        <i class="bi bi-shield-lock me-2"></i>Iniciar Sesión con Keycloak
+                    </a>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">Usuarios de prueba:</h6>
+                        
+                        <div class="mb-2">
+                            <strong>Informático</strong><br>
+                            <small>Usuario: test / Contraseña: test123<br>
+                            Permisos: read, write, update, delete</small>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <strong>Gerente General</strong><br>
+                            <small>Usuario: gerente / Contraseña: gerente123<br>
+                            Permisos: todos</small>
+                        </div>
+                        
+                        <div>
+                            <strong>Cliente</strong><br>
+                            <small>Usuario: cliente / Contraseña: cliente123<br>
+                            Permisos: read</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

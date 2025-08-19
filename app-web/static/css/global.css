@@ -1,0 +1,418 @@
+/* Global CSS for Agencia de Aduanas ERP - Bootstrap Compatible */
+
+/* ==================== Variables ==================== */
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --secondary-color: #2c3e50;
+    --secondary-dark: #1a1f36;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --info-color: #1976d2;
+    --light-gray: #f5f6fa;
+    --border-color: #e0e0e0;
+    
+    --sidebar-width: 250px;
+    --sidebar-collapsed: 70px;
+    --navbar-height: 60px;
+}
+
+/* ==================== Base Overrides ==================== */
+body {
+    background-color: var(--light-gray);
+    padding-top: var(--navbar-height);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* ==================== Navbar Custom ==================== */
+.navbar-custom {
+    height: var(--navbar-height);
+    background-color: var(--secondary-dark);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-custom .navbar-brand {
+    color: white !important;
+    font-weight: 600;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.navbar-custom .user-info {
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.navbar-custom .user-info:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.btn-dashboard {
+    background: rgba(255,255,255,0.1);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.btn-dashboard:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* ==================== Sidebar ==================== */
+.sidebar {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background-color: var(--secondary-color);
+    padding-top: 20px;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+    z-index: 1020;
+}
+
+/* Estado inicial sin transición para evitar parpadeo */
+.sidebar[style*="transition: none"] {
+    transition: none !important;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    border-left: 3px solid transparent;
+    white-space: nowrap;
+}
+
+.sidebar-item:hover {
+    background-color: #34495e;
+    border-left-color: var(--primary-color);
+    color: #ecf0f1;
+    text-decoration: none;
+}
+
+.sidebar-item.active {
+    background-color: #34495e;
+    border-left-color: var(--primary-color);
+}
+
+.sidebar-item .icon {
+    margin-right: 15px;
+    font-style: normal;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar.collapsed .sidebar-item {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.sidebar.collapsed .sidebar-item .icon {
+    margin-right: 0;
+}
+
+.sidebar.collapsed .sidebar-item .text-span {
+    display: none;
+}
+
+/* ==================== Main Content ==================== */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - var(--navbar-height));
+}
+
+/* Estado inicial sin transición para evitar parpadeo */
+.main-content[style*="transition: none"] {
+    transition: none !important;
+}
+
+.main-content.full-width {
+    margin-left: 0;
+}
+
+.main-content.sidebar-collapsed {
+    margin-left: var(--sidebar-collapsed);
+}
+
+/* ==================== Page Specific Hiding ==================== */
+body.page-index .sidebar,
+body.page-login .sidebar,
+body.page-error .sidebar,
+body.page-user .sidebar {
+    display: none !important;
+}
+
+body.page-index .main-content,
+body.page-login .main-content,
+body.page-error .main-content {
+    margin-left: 0 !important;
+}
+
+body.page-index .sidebar-toggle,
+body.page-login .sidebar-toggle,
+body.page-error .sidebar-toggle {
+    display: none !important;
+}
+
+/* ==================== Hero Section ==================== */
+.hero-section {
+    background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 80px 20px;
+    margin: -30px -30px 40px -30px;
+}
+
+/* ==================== Cards & Stats ==================== */
+.stat-card {
+    border-left: 4px solid var(--primary-color);
+    height: 100%;
+}
+
+.stat-card.success {
+    border-left-color: var(--success-color);
+}
+
+.stat-card.warning {
+    border-left-color: var(--warning-color);
+}
+
+.stat-card.danger {
+    border-left-color: var(--danger-color);
+}
+
+.stat-card .card-body {
+    padding: 20px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* ==================== Status Badges ==================== */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.status-pendiente {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.status-procesando {
+    background: #e3f2fd;
+    color: var(--info-color);
+}
+
+.status-completo {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* ==================== Progress ==================== */
+.progress-mini {
+    width: 60px;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.progress-mini-fill {
+    height: 100%;
+    background: var(--primary-color);
+    transition: width 0.3s;
+}
+
+/* ==================== Upload Zone ==================== */
+.upload-zone {
+    border: 2px dashed var(--primary-color);
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    background: #e3f2fd;
+}
+
+.upload-zone.dragover {
+    border-color: var(--success-color);
+    background: #e8f5e9;
+    transform: scale(1.02);
+}
+
+/* ==================== User Info Box ==================== */
+.user-info-box {
+    background: #e3f2fd;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+/* ==================== Mobile Sidebar ==================== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1019;
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
+/* ==================== Activity Items ==================== */
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ==================== Features Grid ==================== */
+.feature-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    font-size: 48px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 768px) {
+    .navbar-custom .navbar-brand {
+        font-size: 16px;
+    }
+    
+    .navbar-custom .container-fluid {
+        padding: 0 15px;
+    }
+    
+    .navbar-custom .btn-dashboard {
+        display: none !important;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        width: 250px !important;
+        transition: transform 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px 15px;
+    }
+    
+    .hero-section {
+        padding: 60px 20px;
+        margin: -20px -15px 30px -15px;
+    }
+    
+    .hero-section h1 {
+        font-size: 32px;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+    }
+    
+    .table-responsive {
+        font-size: 14px;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .upload-zone {
+        padding: 30px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-custom .navbar-brand {
+        font-size: 14px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .hero-section h1 {
+        font-size: 28px;
+    }
+    
+    .hero-section p {
+        font-size: 16px;
+    }
+    
+    .stat-card {
+        margin-bottom: 15px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    :root {
+        --sidebar-width: 200px;
+    }
+    
+    .sidebar.collapsed {
+        width: 60px;
+    }
+    
+    .main-content.sidebar-collapsed {
+        margin-left: 60px;
+    }
+}

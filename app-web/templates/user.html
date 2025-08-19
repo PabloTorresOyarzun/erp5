@@ -3,288 +3,146 @@
 {% block title %}Mi Perfil - Agencia de Aduanas ERP{% endblock %}
 
 {% block content %}
-<style>
-    .profile-container {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .profile-header {
-        background: white;
-        border-radius: 8px;
-        padding: 30px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
-        text-align: center;
-    }
-    
-    .profile-avatar {
-        width: 120px;
-        height: 120px;
-        background: #3498db;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 48px;
-        color: white;
-        font-weight: bold;
-    }
-    
-    .profile-header h1 {
-        color: #2c3e50;
-        margin-bottom: 10px;
-    }
-    
-    .profile-header p {
-        color: #7f8c8d;
-        font-size: 16px;
-    }
-    
-    .profile-section {
-        background: white;
-        border-radius: 8px;
-        padding: 30px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-    }
-    
-    .profile-section h2 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #f0f0f0;
-    }
-    
-    .info-row {
-        display: flex;
-        padding: 15px 0;
-        border-bottom: 1px solid #f8f9fa;
-    }
-    
-    .info-row:last-child {
-        border-bottom: none;
-    }
-    
-    .info-label {
-        flex: 0 0 200px;
-        color: #7f8c8d;
-        font-weight: 500;
-    }
-    
-    .info-value {
-        flex: 1;
-        color: #2c3e50;
-    }
-    
-    .permissions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
-        margin-top: 15px;
-    }
-    
-    .permission-item {
-        background: #e3f2fd;
-        padding: 10px 15px;
-        border-radius: 4px;
-        text-align: center;
-        color: #1976d2;
-        font-weight: 500;
-    }
-    
-    .permission-item.role {
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
-    
-    .activity-log {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .activity-entry {
-        padding: 10px 0;
-        border-bottom: 1px solid #f0f0f0;
-        font-size: 14px;
-    }
-    
-    .activity-entry:last-child {
-        border-bottom: none;
-    }
-    
-    .activity-time {
-        color: #7f8c8d;
-        font-size: 12px;
-    }
-    
-    .btn-group {
-        display: flex;
-        gap: 15px;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-    
-    @media (max-width: 768px) {
-        .profile-container {
-            padding: 0 15px;
-        }
-        
-        .profile-header {
-            padding: 20px;
-        }
-        
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            font-size: 32px;
-        }
-        
-        .profile-section {
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .profile-section h2 {
-            font-size: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .info-row {
-            flex-direction: column;
-            padding: 10px 0;
-        }
-        
-        .info-label {
-            flex: none;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .permissions-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-        
-        .btn-group {
-            flex-direction: column;
-        }
-        
-        .btn-group .btn {
-            width: 100%;
-            text-align: center;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .permissions-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-avatar">
-            {{ user.username[0].upper() }}
-        </div>
-        <h1>{{ user.username }}</h1>
-        <p>{{ user.email }}</p>
-    </div>
-    
-    <div class="profile-section">
-        <h2>Información Personal</h2>
-        
-        <div class="info-row">
-            <div class="info-label">Nombre de Usuario</div>
-            <div class="info-value">{{ user.username }}</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">Correo Electrónico</div>
-            <div class="info-value">{{ user.email }}</div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">Estado de la Cuenta</div>
-            <div class="info-value">
-                <span class="badge" style="background: #2ecc71; color: white;">Activa</span>
-            </div>
-        </div>
-        
-        <div class="info-row">
-            <div class="info-label">Última Conexión</div>
-            <div class="info-value">Hoy a las 10:30 AM</div>
-        </div>
-    </div>
-    
-    <div class="profile-section">
-        <h2>Grupos y Permisos</h2>
-        
-        <div class="info-row">
-            <div class="info-label">Grupos</div>
-            <div class="info-value">
-                {% for group in user.groups %}
-                <span class="badge group">{{ group }}</span>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <h3 style="margin-top: 20px; margin-bottom: 10px; color: #2c3e50;">Permisos Asignados</h3>
-        <div class="permissions-grid">
-            {% for role in user.roles %}
-            <div class="permission-item role">
-                {% if role == 'read' %}📖 Lectura
-                {% elif role == 'write' %}✏️ Escritura
-                {% elif role == 'update' %}🔄 Actualización
-                {% elif role == 'delete' %}🗑️ Eliminación
-                {% elif role == 'approve' %}✅ Aprobación
-                {% else %}{{ role }}
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    
-    <div class="profile-section">
-        <h2>Actividad Reciente</h2>
-        
-        <div class="activity-log">
-            <div class="activity-entry">
-                <div>Inicio de sesión exitoso</div>
-                <div class="activity-time">Hoy, 10:30 AM</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Profile Header -->
+            <div class="card mb-4">
+                <div class="card-body text-center py-4">
+                    <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 120px; height: 120px;">
+                        <span class="text-white" style="font-size: 48px; font-weight: bold;">
+                            {{ user.username[0].upper() }}
+                        </span>
+                    </div>
+                    <h2>{{ user.username }}</h2>
+                    <p class="text-muted mb-0">{{ user.email }}</p>
+                </div>
             </div>
             
-            <div class="activity-entry">
-                <div>Actualización de perfil</div>
-                <div class="activity-time">Ayer, 3:45 PM</div>
+            <!-- Personal Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Nombre de Usuario</div>
+                        <div class="col-sm-8">{{ user.username }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Correo Electrónico</div>
+                        <div class="col-sm-8">{{ user.email }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Estado de la Cuenta</div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-success">Activa</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Última Conexión</div>
+                        <div class="col-sm-8">Hoy a las 10:30 AM</div>
+                    </div>
+                </div>
             </div>
             
-            <div class="activity-entry">
-                <div>Cambio de contraseña</div>
-                <div class="activity-time">Hace 3 días, 2:20 PM</div>
+            <!-- Groups and Permissions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Grupos y Permisos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2">Grupos</h6>
+                        <div>
+                            {% for group in user.groups %}
+                            <span class="badge bg-secondary me-1 mb-1">{{ group }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h6 class="text-muted mb-2">Permisos Asignados</h6>
+                        <div class="row g-2">
+                            {% for role in user.roles %}
+                            <div class="col-6 col-md-4">
+                                <div class="p-2 text-center rounded" style="background: #e3f2fd;">
+                                    {% if role == 'read' %}
+                                    <i class="bi bi-eye text-primary"></i> Lectura
+                                    {% elif role == 'write' %}
+                                    <i class="bi bi-pencil text-primary"></i> Escritura
+                                    {% elif role == 'update' %}
+                                    <i class="bi bi-arrow-repeat text-primary"></i> Actualización
+                                    {% elif role == 'delete' %}
+                                    <i class="bi bi-trash text-primary"></i> Eliminación
+                                    {% elif role == 'approve' %}
+                                    <i class="bi bi-check-circle text-primary"></i> Aprobación
+                                    {% else %}
+                                    {{ role }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="activity-entry">
-                <div>Acceso al panel de administración</div>
-                <div class="activity-time">Hace 5 días, 11:00 AM</div>
+            <!-- Recent Activity -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Inicio de sesión exitoso</span>
+                                <small class="text-muted">Hoy, 10:30 AM</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Actualización de perfil</span>
+                                <small class="text-muted">Ayer, 3:45 PM</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Cambio de contraseña</span>
+                                <small class="text-muted">Hace 3 días, 2:20 PM</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Acceso al panel de administración</span>
+                                <small class="text-muted">Hace 5 días, 11:00 AM</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    
-    <div class="profile-section">
-        <h2>Configuración de Cuenta</h2>
-        
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="alert('Función no implementada')">
-                Cambiar Contraseña
-            </button>
-            <button class="btn" onclick="alert('Función no implementada')">
-                Configurar Notificaciones
-            </button>
-            <button class="btn btn-danger" onclick="alert('Función no implementada')">
-                Desactivar Cuenta
-            </button>
+            
+            <!-- Account Settings -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Configuración de Cuenta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2 d-md-block">
+                        <button class="btn btn-primary" onclick="alert('Función no implementada')">
+                            <i class="bi bi-key me-2"></i>Cambiar Contraseña
+                        </button>
+                        <button class="btn btn-secondary" onclick="alert('Función no implementada')">
+                            <i class="bi bi-bell me-2"></i>Configurar Notificaciones
+                        </button>
+                        <button class="btn btn-danger" onclick="alert('Función no implementada')">
+                            <i class="bi bi-x-circle me-2"></i>Desactivar Cuenta
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
