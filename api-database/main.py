@@ -12,7 +12,7 @@ from psycopg2.extras import RealDictCursor
 app = FastAPI()
 
 # Configuración de base de datos
-DATABASE_URL = f"postgresql://{os.getenv('DESPACHOS_DB_USER')}:{os.getenv('DESPACHOS_DB_PASSWORD')}@{os.getenv('DESPACHOS_DB_HOST')}/{os.getenv('DESPACHOS_DB_NAME')}"
+DATABASE_URL = f"postgresql://postgres:postgres@postgres/postgres"
 
 # SQLAlchemy
 engine = create_engine(DATABASE_URL)

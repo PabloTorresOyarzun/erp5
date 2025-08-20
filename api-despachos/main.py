@@ -13,7 +13,7 @@ import base64
 app = FastAPI()
 
 # Configuración de base de datos
-DATABASE_URL = f"postgresql://{os.getenv('DESPACHOS_DB_USER')}:{os.getenv('DESPACHOS_DB_PASSWORD')}@{os.getenv('DESPACHOS_DB_HOST')}/{os.getenv('DESPACHOS_DB_NAME')}"
+DATABASE_URL = f"postgresql://postgres:postgres@postgres/postgres"
 SGD_URL = os.getenv('SGD_URL')
 SGD_AUTH_TOKEN = os.getenv('SGD_AUTH_TOKEN')
 
