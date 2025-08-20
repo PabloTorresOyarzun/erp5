@@ -25,6 +25,7 @@ Base = declarative_base()
 # Modelos de base de datos
 class Despacho(Base):
     __tablename__ = "despachos"
+    __table_args__ = {"schema": "operaciones"} 
     
     numero_despacho = Column(String, primary_key=True)
     estado = Column(String, default="pendiente")
@@ -37,6 +38,7 @@ class Despacho(Base):
 
 class Documento(Base):
     __tablename__ = "documentos"
+    __table_args__ = {"schema": "operaciones"}
     
     id = Column(Integer, primary_key=True, index=True)
     numero_despacho = Column(String, index=True)
@@ -50,6 +52,7 @@ class Documento(Base):
 
 class Procedimiento(Base):
     __tablename__ = "procedimientos"
+    __table_args__ = {"schema": "operaciones"}
     
     id = Column(Integer, primary_key=True, index=True)
     numero_despacho = Column(String, index=True)
