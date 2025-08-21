@@ -179,7 +179,7 @@ CREATE TABLE entidades.proveedores (
 -- 4. ESQUEMA OPERACIONES - PROCESOS ADUANEROS
 -- ==========================================
 
--- Despachos (mantener tabla actual con mejoras)
+-- Despachos con campos de usuario
 CREATE TABLE operaciones.despachos (
     numero_despacho VARCHAR(50) PRIMARY KEY,
     estado VARCHAR(20) DEFAULT 'pendiente',
@@ -190,13 +190,17 @@ CREATE TABLE operaciones.despachos (
     datos_extraidos JSONB,
     extra_metadata JSONB,
     
-    -- NUEVAS REFERENCIAS
+    -- REFERENCIAS
     importador_id INTEGER REFERENCES entidades.clientes(id),
     despachador_id INTEGER REFERENCES entidades.proveedores(id),
-    consignante_id INTEGER REFERENCES entidades.clientes(id)
+    consignante_id INTEGER REFERENCES entidades.clientes(id),
+    
+    -- CAMPOS DE USUARIO
+    usuario_creador VARCHAR(100),
+    usuario_actualizacion VARCHAR(100)
 );
 
--- Documentos (mantener estructura actual)
+-- Documentos
 CREATE TABLE operaciones.documentos (
     id SERIAL PRIMARY KEY,
     numero_despacho VARCHAR(50) REFERENCES operaciones.despachos(numero_despacho),
@@ -209,7 +213,7 @@ CREATE TABLE operaciones.documentos (
     fecha_procesamiento TIMESTAMP
 );
 
--- Declaraciones de ingreso (DIN)
+-- Declaraciones de ingreso (DIN) con campos de usuario
 CREATE TABLE operaciones.declaraciones_ingreso (
     id SERIAL PRIMARY KEY,
     numero_identificacion VARCHAR(20) UNIQUE NOT NULL,
@@ -287,7 +291,12 @@ CREATE TABLE operaciones.declaraciones_ingreso (
     fecha_aceptacion TIMESTAMP,
     fecha_fiscalizacion TIMESTAMP,
     usuario_creacion VARCHAR(100),
-    fiscalizador VARCHAR(100)
+    fiscalizador VARCHAR(100),
+    
+    -- CAMPOS DE USUARIO ADICIONALES
+    usuario_creador VARCHAR(100),
+    usuario_actualizacion VARCHAR(100),
+    usuario_responsable VARCHAR(100)
 );
 
 -- Ítems de la declaración
@@ -362,7 +371,7 @@ CREATE TABLE operaciones.din_historial (
     fecha_cambio TIMESTAMP DEFAULT NOW()
 );
 
--- Procedimientos (mantener con mejoras)
+-- Procedimientos con campos de usuario
 CREATE TABLE operaciones.procedimientos (
     id SERIAL PRIMARY KEY,
     numero_despacho VARCHAR(50) REFERENCES operaciones.despachos(numero_despacho),
@@ -372,7 +381,25 @@ CREATE TABLE operaciones.procedimientos (
     usuario_asignado VARCHAR(100),
     fecha_inicio TIMESTAMP,
     fecha_fin TIMESTAMP,
-    datos JSONB
+    datos JSONB,
+    
+    -- CAMPOS DE USUARIO ADICIONALES
+    usuario_creador VARCHAR(100),
+    fecha_creacion TIMESTAMP DEFAULT NOW()
+);
+
+-- TABLA DE AUDITORÍA DE OPERACIONES (NUEVA)
+CREATE TABLE operaciones.auditoria_operaciones (
+    id SERIAL PRIMARY KEY,
+    tabla_afectada VARCHAR(100) NOT NULL,
+    operacion VARCHAR(20) NOT NULL, -- INSERT, UPDATE, DELETE
+    registro_id VARCHAR(100),
+    usuario_keycloak VARCHAR(100) NOT NULL,
+    datos_anteriores JSONB,
+    datos_nuevos JSONB,
+    fecha_operacion TIMESTAMP DEFAULT NOW(),
+    ip_origen VARCHAR(45),
+    user_agent TEXT
 );
 
 -- 5. ÍNDICES PARA PERFORMANCE
@@ -383,12 +410,14 @@ CREATE INDEX idx_despachos_importador ON operaciones.despachos(importador_id);
 CREATE INDEX idx_despachos_despachador ON operaciones.despachos(despachador_id);
 CREATE INDEX idx_despachos_estado ON operaciones.despachos(estado);
 CREATE INDEX idx_despachos_fecha_creacion ON operaciones.despachos(fecha_creacion);
+CREATE INDEX idx_despachos_usuario_creador ON operaciones.despachos(usuario_creador);
 
 -- Índices en declaraciones
 CREATE INDEX idx_din_numero_despacho ON operaciones.declaraciones_ingreso(numero_despacho);
 CREATE INDEX idx_din_estado ON operaciones.declaraciones_ingreso(estado);
 CREATE INDEX idx_din_fecha_creacion ON operaciones.declaraciones_ingreso(fecha_creacion);
 CREATE INDEX idx_din_consignatario ON operaciones.declaraciones_ingreso(consignatario_id);
+CREATE INDEX idx_din_usuario_responsable ON operaciones.declaraciones_ingreso(usuario_responsable);
 
 -- Índices en items
 CREATE INDEX idx_din_items_declaracion ON operaciones.din_items(declaracion_id);
@@ -399,6 +428,11 @@ CREATE INDEX idx_clientes_rut ON entidades.clientes(rut);
 CREATE INDEX idx_clientes_tipo ON entidades.clientes(tipo_cliente);
 CREATE INDEX idx_proveedores_rut ON entidades.proveedores(rut);
 CREATE INDEX idx_proveedores_tipo ON entidades.proveedores(tipo_proveedor);
+
+-- Índices para auditoría
+CREATE INDEX idx_auditoria_usuario ON operaciones.auditoria_operaciones(usuario_keycloak);
+CREATE INDEX idx_auditoria_fecha ON operaciones.auditoria_operaciones(fecha_operacion);
+CREATE INDEX idx_auditoria_tabla ON operaciones.auditoria_operaciones(tabla_afectada);
 
 -- 6. POBLAR DATOS MAESTROS
 -- ==========================================
@@ -610,6 +644,7 @@ SELECT
     di.numero_despacho,
     di.estado,
     di.fecha_creacion,
+    di.usuario_responsable,
     
     -- Información del importador
     cli_imp.razon_social as importador_nombre,
@@ -652,6 +687,23 @@ SELECT
 FROM operaciones.din_items 
 GROUP BY declaracion_id;
 
+-- Vista para operaciones por usuario (NUEVA)
+CREATE OR REPLACE VIEW operaciones.vista_operaciones_usuario AS
+SELECT 
+    d.numero_despacho,
+    d.estado,
+    d.fecha_creacion,
+    d.usuario_creador,
+    d.usuario_actualizacion,
+    di.numero_identificacion as din_numero,
+    di.usuario_responsable,
+    COUNT(p.id) as procedimientos_activos
+FROM operaciones.despachos d
+LEFT JOIN operaciones.declaraciones_ingreso di ON d.numero_despacho = di.numero_despacho
+LEFT JOIN operaciones.procedimientos p ON d.numero_despacho = p.numero_despacho AND p.estado != 'completado'
+GROUP BY d.numero_despacho, d.estado, d.fecha_creacion, d.usuario_creador, 
+         d.usuario_actualizacion, di.numero_identificacion, di.usuario_responsable;
+
 -- 9. COMENTARIOS EN TABLAS
 -- ==========================================
 
@@ -661,6 +713,7 @@ COMMENT ON SCHEMA operaciones IS 'Procesos aduaneros: despachos, declaraciones D
 
 COMMENT ON TABLE operaciones.declaraciones_ingreso IS 'Formularios DIN (Declaración de Ingreso Nacional)';
 COMMENT ON TABLE operaciones.din_items IS 'Ítems/mercancías de cada declaración de ingreso';
+COMMENT ON TABLE operaciones.auditoria_operaciones IS 'Registro de auditoría de todas las operaciones realizadas';
 COMMENT ON TABLE sna.codigos_aduanas IS 'Códigos oficiales de aduanas según Anexo 51-1';
 COMMENT ON TABLE sna.codigos_arancelarios IS 'Códigos del Arancel Aduanero Nacional';
 COMMENT ON TABLE entidades.clientes IS 'Importadores y exportadores (clientes de la agencia)';

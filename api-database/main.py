@@ -11,7 +11,7 @@ from psycopg2.extras import RealDictCursor
 
 app = FastAPI()
 
-# Configuración de base de datos
+# ConfiguraciÃ³n de base de datos
 DATABASE_URL = f"postgresql://postgres:postgres@postgres/postgres"
 
 # SQLAlchemy
@@ -55,7 +55,7 @@ class QueryResult(BaseModel):
     execution_time: float
     query: str
 
-# Endpoints básicos
+# Endpoints bÃ¡sicos
 @app.get("/")
 async def root():
     return {"service": "Database Explorer API", "status": "running"}
@@ -105,7 +105,7 @@ async def get_database_schemas():
                     total_tables=len(tables)
                 ))
         
-        # Si no hay esquemas custom, usar el público
+        # Si no hay esquemas custom, usar el pÃºblico
         if not schemas_info:
             tables = inspector.get_table_names()
             schemas_info.append(DatabaseSchema(
@@ -121,14 +121,14 @@ async def get_database_schemas():
 
 @app.get("/db/table/{schema}/{table_name}", response_model=TableInfo)
 async def get_table_info(schema: str, table_name: str):
-    """Obtener información detallada de una tabla"""
+    """Obtener informaciÃ³n detallada de una tabla"""
     try:
         inspector = inspect(engine)
         
-        # Información de columnas
+        # InformaciÃ³n de columnas
         columns_raw = inspector.get_columns(table_name, schema=schema)
         
-        # Convertir información de columnas a formato serializable
+        # Convertir informaciÃ³n de columnas a formato serializable
         columns_info = []
         for col in columns_raw:
             column_dict = {
@@ -151,7 +151,7 @@ async def get_table_info(schema: str, table_name: str):
             result = conn.execute(text(count_query))
             row_count = result.scalar()
         
-        # Índices
+        # Ãndices
         indexes = inspector.get_indexes(table_name, schema=schema)
         index_names = [idx['name'] for idx in indexes]
         
@@ -180,7 +180,7 @@ async def get_table_info(schema: str, table_name: str):
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error obteniendo información de tabla: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo informaciÃ³n de tabla: {str(e)}")
 
 @app.get("/db/table/{schema}/{table_name}/data", response_model=TableData)
 async def get_table_data(
@@ -191,9 +191,9 @@ async def get_table_data(
     order_by: Optional[str] = None,
     order_direction: str = "ASC"
 ):
-    """Obtener datos de una tabla con paginación"""
+    """Obtener datos de una tabla con paginaciÃ³n"""
     try:
-        # Validar parámetros
+        # Validar parÃ¡metros
         if page < 1:
             page = 1
         if page_size < 1 or page_size > 1000:
@@ -223,7 +223,7 @@ async def get_table_data(
                 direction = "DESC" if order_direction.upper() == "DESC" else "ASC"
                 base_query += f" ORDER BY {order_by} {direction}"
             
-            # Agregar paginación
+            # Agregar paginaciÃ³n
             data_query = f"{base_query} LIMIT {page_size} OFFSET {offset}"
             
             # Ejecutar consulta
@@ -245,7 +245,7 @@ async def get_table_data(
                         row_list.append(str(value))
                 rows_data.append(row_list)
             
-            # Calcular páginas
+            # Calcular pÃ¡ginas
             total_pages = (total_rows + page_size - 1) // page_size
             
             return TableData(
@@ -268,9 +268,9 @@ async def execute_query(query_data: dict):
         query = query_data.get('query', '').strip()
         
         if not query:
-            raise HTTPException(status_code=400, detail="Query vacío")
+            raise HTTPException(status_code=400, detail="Query vacÃ­o")
         
-        # Validación básica de seguridad - solo permitir SELECT
+        # ValidaciÃ³n bÃ¡sica de seguridad - solo permitir SELECT
         query_upper = query.upper()
         if not query_upper.startswith('SELECT'):
             raise HTTPException(status_code=400, detail="Solo se permiten consultas SELECT")
@@ -279,7 +279,7 @@ async def execute_query(query_data: dict):
         prohibited_words = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE', 'TRUNCATE', 'EXEC']
         for word in prohibited_words:
             if word in query_upper:
-                raise HTTPException(status_code=400, detail=f"Operación '{word}' no permitida")
+                raise HTTPException(status_code=400, detail=f"OperaciÃ³n '{word}' no permitida")
         
         start_time = datetime.now()
         
@@ -323,17 +323,17 @@ async def execute_query(query_data: dict):
 
 @app.get("/db/stats")
 async def get_database_stats():
-    """Obtener estadísticas generales de la base de datos"""
+    """Obtener estadÃ­sticas generales de la base de datos"""
     try:
         with engine.connect() as conn:
-            # Información general de la base de datos
+            # InformaciÃ³n general de la base de datos
             db_size_query = """
                 SELECT pg_size_pretty(pg_database_size(current_database())) as database_size
             """
             db_size_result = conn.execute(text(db_size_query))
             database_size = db_size_result.scalar()
             
-            # Número total de tablas
+            # NÃºmero total de tablas
             tables_query = """
                 SELECT COUNT(*) as table_count
                 FROM information_schema.tables 
@@ -351,7 +351,7 @@ async def get_database_stats():
             connections_result = conn.execute(text(connections_query))
             active_connections = connections_result.scalar()
             
-            # Información de versión
+            # InformaciÃ³n de versiÃ³n
             version_query = "SELECT version()"
             version_result = conn.execute(text(version_query))
             pg_version = version_result.scalar()
@@ -366,14 +366,14 @@ async def get_database_stats():
             }
             
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo estadÃ­sticas: {str(e)}")
 
 @app.get("/db/table/{schema}/{table_name}/schema")
 async def get_table_schema(schema: str, table_name: str):
     """Obtener el esquema SQL de una tabla"""
     try:
         with engine.connect() as conn:
-            # Query para obtener la definición de la tabla
+            # Query para obtener la definiciÃ³n de la tabla
             schema_query = """
                 SELECT column_name, data_type, is_nullable, column_default, character_maximum_length
                 FROM information_schema.columns 
@@ -384,7 +384,7 @@ async def get_table_schema(schema: str, table_name: str):
             result = conn.execute(text(schema_query), {"schema": schema, "table_name": table_name})
             columns = result.fetchall()
             
-            # Construir definición SQL
+            # Construir definiciÃ³n SQL
             sql_definition = f"CREATE TABLE {schema}.{table_name} (\n"
             column_definitions = []
             

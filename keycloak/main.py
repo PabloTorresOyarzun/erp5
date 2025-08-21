@@ -751,7 +751,7 @@ async def health():
     """Health check endpoint - siempre responde OK para que el contenedor se considere healthy"""
     return {
         "status": "healthy",
-        "service": "keycloak-init",
+        "service": "api-keycloak",
         "timestamp": time.time()
     }
 

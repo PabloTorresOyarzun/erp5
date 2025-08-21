@@ -14,7 +14,7 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # URL de las APIs
-AUTH_API_URL = 'http://keycloak-init:8000'
+AUTH_API_URL = 'http://api-keycloak:8000'
 DOC_API_URL = 'http://api-docs:8002'
 DESPACHOS_API_URL = os.getenv('DESPACHOS_API_URL', 'http://api-despachos:8003')
 DB_API_URL = "http://api-database:8004"

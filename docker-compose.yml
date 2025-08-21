@@ -30,7 +30,7 @@ services:
       postgres:
         condition: service_healthy
 
-  keycloak-init:
+  api-keycloak:
     build: ./keycloak
     env_file:
       - .env
@@ -101,7 +101,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      keycloak-init:
+      api-keycloak:
         condition: service_healthy
       api-docs:
         condition: service_healthy
