@@ -42,3 +42,17 @@ node_modules/
 # Temporary files
 *.tmp
 *.temp
+
+# Others
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.bz2
+*.xz
+*.7z
+*.tar
+*.gz
+*.bz2
+*.xz
