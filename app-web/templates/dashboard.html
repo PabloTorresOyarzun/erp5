@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Agencia de Aduanas ERP{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Bienvenido, {{ user.username }}</h1>
+            <p class="text-muted">Panel de control principal del sistema ERP</p>
+        </div>
+    </div>
+    
+    <!-- User Info -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="user-info-box">
+                <h5 class="mb-3">Tu información</h5>
+                <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
+                <p class="mb-2"><strong>Grupos:</strong> 
+                    {% for group in user.groups %}
+                    <span class="badge bg-secondary">{{ group }}</span>
+                    {% endfor %}
+                </p>
+                <p class="mb-0"><strong>Permisos:</strong> 
+                    {% for role in user.roles %}
+                    <span class="badge bg-success">{{ role }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6 class="text-muted">Operaciones del Mes</h6>
+                    <h2 class="mb-0">247</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card success">
+                <div class="card-body">
+                    <h6 class="text-muted">Despachos Completados</h6>
+                    <h2 class="mb-0 text-success">182</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card warning">
+                <div class="card-body">
+                    <h6 class="text-muted">En Proceso</h6>
+                    <h2 class="mb-0 text-warning">53</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card danger">
+                <div class="card-body">
+                    <h6 class="text-muted">Pendientes</h6>
+                    <h2 class="mb-0 text-danger">12</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <h2 class="mb-3">Acciones Rápidas</h2>
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="#" class="card text-decoration-none text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-text fs-1 text-primary"></i>
+                    <h6 class="mt-2">Nueva Declaración</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="#" class="card text-decoration-none text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up fs-1 text-primary"></i>
+                    <h6 class="mt-2">Ver Reportes</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="#" class="card text-decoration-none text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-people fs-1 text-primary"></i>
+                    <h6 class="mt-2">Gestión de Clientes</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <a href="#" class="card text-decoration-none text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam fs-1 text-primary"></i>
+                    <h6 class="mt-2">Control de Inventario</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Actividad Reciente</h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group list-group-flush">
+                <div class="list-group-item">
+                    <div class="d-flex align-items-center">
+                        <div class="activity-icon bg-primary bg-opacity-10 me-3">
+                            <i class="bi bi-arrow-down-circle text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Nueva importación registrada</h6>
+                            <small class="text-muted">Cliente: ABC Company - Hace 10 minutos</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex align-items-center">
+                        <div class="activity-icon bg-success bg-opacity-10 me-3">
+                            <i class="bi bi-check-circle text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Despacho completado</h6>
+                            <small class="text-muted">Operación #2024-1234 - Hace 1 hora</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex align-items-center">
+                        <div class="activity-icon bg-info bg-opacity-10 me-3">
+                            <i class="bi bi-clipboard-check text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Documentación actualizada</h6>
+                            <small class="text-muted">Expediente #2024-5678 - Hace 2 horas</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex align-items-center">
+                        <div class="activity-icon bg-warning bg-opacity-10 me-3">
+                            <i class="bi bi-exclamation-triangle text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Revisión pendiente</h6>
+                            <small class="text-muted">3 declaraciones requieren aprobación - Hace 3 horas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

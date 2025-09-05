@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}Administración - Agencia de Aduanas ERP{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h1 class="text-corporate-secondary">Panel de Administración</h1>
+                <div class="btn-group-corporate d-flex gap-2 flex-wrap" role="group">
+                    <button class="btn btn-primary btn-corporate" data-bs-toggle="modal" data-bs-target="#userModal" id="newUserBtn">
+                        <i class="bi bi-person-plus me-2"></i>
+                        <span class="d-none d-sm-inline">Nuevo Usuario</span>
+                        <span class="d-inline d-sm-none">Nuevo</span>
+                    </button>
+                    <button class="btn btn-success btn-corporate" onclick="refreshDatabaseExplorer()" id="refreshDbBtn" style="display: none;">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        <span class="d-none d-sm-inline">Actualizar BD</span>
+                        <span class="d-inline d-sm-none">Actualizar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs admin-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" 
+                    type="button" role="tab">
+                <i class="bi bi-people me-2"></i>
+                <span class="d-none d-sm-inline">Gestión de Usuarios</span>
+                <span class="d-inline d-sm-none">Usuarios</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database-pane" 
+                    type="button" role="tab">
+                <i class="bi bi-server me-2"></i>
+                <span class="d-none d-sm-inline">Explorador de Base de Datos</span>
+                <span class="d-inline d-sm-none">Base de Datos</span>
+            </button>
+        </li>
+    </ul>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="adminTabContent">
+        <!-- Users Tab -->
+        <div class="tab-pane fade show active" id="users-pane" role="tabpanel">
+            <!-- Stats -->
+            <div class="row mb-4 stats-mobile">
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Total Usuarios</h6>
+                            <h2 class="text-corporate-primary" id="totalUsers">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Usuarios Activos</h6>
+                            <h2 class="text-success" id="activeUsers">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Grupos</h6>
+                            <h2 class="text-corporate-secondary">11</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Roles</h6>
+                            <h2 class="text-warning">5</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="card card-corporate">
+                <div class="card-header card-header-corporate">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-people"></i>
+                            <h5 class="mb-0">Gestión de Usuarios</h5>
+                        </div>
+                        <div class="input-group search-mobile" style="max-width: 300px;">
+                            <input type="text" class="form-control form-control-corporate" 
+                                   placeholder="Buscar usuarios..." id="searchInput" onkeyup="filterUsers()">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-search"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive table-responsive-corporate">
+                        <table class="table table-corporate table-hover mb-0" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th class="d-none d-md-table-cell">Email</th>
+                                    <th class="d-none d-lg-table-cell">Grupos</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="loading-spinner"></div>
+                                        <span class="ms-2">Cargando...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Database Tab -->
+        <div class="tab-pane fade" id="database-pane" role="tabpanel">
+            <!-- Database Stats -->
+            <div class="row mb-4 stats-mobile">
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Tamaño BD</h6>
+                            <h4 class="text-corporate-primary" id="dbSize">-</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Tablas</h6>
+                            <h4 class="text-info" id="dbTables">-</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Conexiones</h6>
+                            <h4 class="text-success" id="dbConnections">-</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card text-center shadow-corporate">
+                        <div class="card-body stat-card-mobile">
+                            <h6 class="text-muted">Versión</h6>
+                            <small class="text-muted" id="dbVersion">-</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Database Explorer -->
+            <div class="row">
+                <!-- Database Tree (Left Panel) -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card card-corporate h-100">
+                        <div class="card-header card-header-corporate">
+                            <h6 class="mb-0">
+                                <i class="bi bi-server me-2"></i>Explorador de BD
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush database-tree" id="databaseTree">
+                                <div class="list-group-item text-center py-3">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Panel (Right Panel) -->
+                <div class="col-lg-9">
+                    <div class="card card-corporate h-100">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <h6 class="mb-0" id="contentTitle">
+                                    <i class="bi bi-table me-2"></i>Seleccione una tabla
+                                </h6>
+                                <div class="btn-group-corporate" role="group" id="contentActions" style="display: none;">
+                                    <button class="btn btn-sm btn-outline-primary btn-sm-corporate" onclick="showTableData()" id="btnShowData">
+                                        <i class="bi bi-table"></i>
+                                        <span class="d-none d-sm-inline ms-1">Datos</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info btn-sm-corporate" onclick="showTableInfo()" id="btnShowInfo">
+                                        <i class="bi bi-info-circle"></i>
+                                        <span class="d-none d-sm-inline ms-1">Info</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary btn-sm-corporate" onclick="showTableSchema()" id="btnShowSchema">
+                                        <i class="bi bi-code"></i>
+                                        <span class="d-none d-sm-inline ms-1">Esquema</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <!-- Default View -->
+                            <div id="defaultView" class="p-4 text-center text-muted">
+                                <i class="bi bi-database" style="font-size: 48px;"></i>
+                                <p class="mt-3">Seleccione una tabla del explorador para ver su contenido</p>
+                                <div class="mt-4">
+                                    <button class="btn btn-primary btn-corporate" data-bs-toggle="modal" data-bs-target="#queryModal">
+                                        <i class="bi bi-play-circle me-2"></i>Ejecutar Consulta SQL
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Table Data View -->
+                            <div id="tableDataView" style="display: none;">
+                                <div class="p-3 border-bottom">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 mb-2 mb-md-0">
+                                            <small class="text-muted">Mostrando registros <span id="recordsInfo">0</span></small>
+                                        </div>
+                                        <div class="col-md-6 text-md-end">
+                                            <div class="d-flex justify-content-end">
+                                                <select class="form-select form-select-sm form-select-corporate" id="pageSizeSelect" onchange="changePageSize()" style="width: auto;">
+                                                    <option value="25">25</option>
+                                                    <option value="50" selected>50</option>
+                                                    <option value="100">100</option>
+                                                    <option value="200">200</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive table-responsive-mobile" style="max-height: 600px;">
+                                    <table class="table table-sm table-hover table-mobile mb-0" id="dataTable">
+                                        <thead class="table-light sticky-top"></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="p-3 border-top">
+                                    <nav>
+                                        <ul class="pagination pagination-sm justify-content-center mb-0 table-pagination" id="tablePagination"></ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            
+                            <!-- Table Info View -->
+                            <div id="tableInfoView" style="display: none;" class="p-4"></div>
+                            
+                            <!-- Table Schema View -->
+                            <div id="tableSchemaView" style="display: none;" class="p-0">
+                                <pre class="border-0 p-4 mb-0 schema-view"><code id="schemaCode"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal fade modal-corporate" id="userModal" tabindex="-1">
+    <div class="modal-dialog modal-mobile">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">
+                    <i class="bi bi-person-plus me-2"></i>Nuevo Usuario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="userForm">
+                <div class="modal-body">
+                    <input type="hidden" id="editMode" value="false">
+                    <input type="hidden" id="originalUsername" value="">
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nombre de Usuario</label>
+                        <input type="text" class="form-control form-control-corporate" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control form-control-corporate" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            Contraseña 
+                            <small id="passwordHint" class="text-muted"></small>
+                        </label>
+                        <input type="password" class="form-control form-control-corporate" id="password" name="password">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control form-control-corporate" id="firstName" name="firstName" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Apellido</label>
+                        <input type="text" class="form-control form-control-corporate" id="lastName" name="lastName" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="groups" class="form-label">Grupos</label>
+                        <select class="form-select form-select-corporate" id="groups" name="groups" multiple size="5">
+                            <option value="Agencia/gerencia">Agencia / Gerencia</option>
+                            <option value="Agencia/informatico">Agencia / Informático</option>
+                            <option value="Agencia/recursos humanos">Agencia / Recursos Humanos</option>
+                            <option value="Agencia/finanzas">Agencia / Finanzas</option>
+                            <option value="Agencia/facturacion">Agencia / Facturación</option>
+                            <option value="Agencia/exportacion">Agencia / Exportación</option>
+                            <option value="Agencia/importacion">Agencia / Importación</option>
+                            <option value="Agencia/operaciones">Agencia / Operaciones</option>
+                            <option value="Clientes/clientePrueba">Clientes / Cliente Prueba</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer btn-group-mobile">
+                    <button type="button" class="btn btn-secondary btn-corporate" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-corporate">
+                        <i class="bi bi-check me-2"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Query Modal -->
+<div class="modal fade modal-corporate" id="queryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-mobile">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-play-circle me-2"></i>Ejecutar Consulta SQL
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="sqlQuery" class="form-label">Consulta SQL (solo SELECT)</label>
+                    <textarea class="form-control query-editor" id="sqlQuery" rows="8" 
+                              placeholder="SELECT * FROM despachos LIMIT 10;"></textarea>
+                    <div class="form-text">Solo se permiten consultas SELECT por seguridad.</div>
+                </div>
+                <div id="queryResult" style="display: none;">
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Resultado:</h6>
+                        <small class="query-stats">
+                            <span id="queryStats"></span>
+                        </small>
+                    </div>
+                    <div class="table-responsive table-responsive-mobile" style="max-height: 300px;">
+                        <table class="table table-sm table-bordered query-result-table" id="queryResultTable">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer btn-group-mobile">
+                <button type="button" class="btn btn-secondary btn-corporate" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary btn-corporate" onclick="executeQuery()">
+                    <i class="bi bi-play-circle me-2"></i>Ejecutar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin-specific JavaScript -->
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

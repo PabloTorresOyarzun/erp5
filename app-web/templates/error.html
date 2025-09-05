@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Agencia de Aduanas ERP{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="error-container text-center">
+                <div class="card card-corporate shadow-corporate">
+                    <div class="card-body p-5">
+                        <!-- Error Icon & Code -->
+                        <div class="mb-4">
+                            {% if code == 403 %}
+                            <div class="error-icon text-warning mb-3">
+                                <i class="bi bi-shield-x" style="font-size: 4rem;"></i>
+                            </div>
+                            <h1 class="text-corporate-secondary mb-3">Acceso Denegado</h1>
+                            <p class="text-muted lead">{{ error or "No tienes permisos suficientes para acceder a esta página." }}</p>
+                            
+                            {% elif code == 404 %}
+                            <div class="error-icon text-info mb-3">
+                                <i class="bi bi-search" style="font-size: 4rem;"></i>
+                            </div>
+                            <h1 class="text-corporate-secondary mb-3">Página No Encontrada</h1>
+                            <p class="text-muted lead">{{ error or "La página que buscas no existe o ha sido movida." }}</p>
+                            
+                            {% elif code == 500 %}
+                            <div class="error-icon text-danger mb-3">
+                                <i class="bi bi-exclamation-triangle-fill" style="font-size: 4rem;"></i>
+                            </div>
+                            <h1 class="text-corporate-secondary mb-3">Error del Servidor</h1>
+                            <p class="text-muted lead">{{ error or "Ha ocurrido un error interno. Por favor, intenta nuevamente más tarde." }}</p>
+                            
+                            {% else %}
+                            <div class="error-code text-corporate-primary mb-3" style="font-size: 5rem; font-weight: bold;">
+                                {{ code or "Error" }}
+                            </div>
+                            <h1 class="text-corporate-secondary mb-3">Ha Ocurrido un Error</h1>
+                            <p class="text-muted lead">{{ error or "Lo sentimos, algo salió mal. Por favor, intenta nuevamente." }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="error-actions d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary btn-corporate">
+                                <i class="bi bi-house-door me-2"></i>Ir al Inicio
+                            </a>
+                            {% if current_user %}
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-corporate">
+                                <i class="bi bi-speedometer2 me-2"></i>Ir al Dashboard
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-info btn-corporate">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Error Details (for debugging - only show if detailed error) -->
+                        {% if error and code and error != "No tienes permisos suficientes para acceder a esta página." %}
+                        <div class="error-details mt-4 pt-4 border-top">
+                            <h6 class="text-corporate-secondary mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Detalles del Error
+                            </h6>
+                            <div class="alert alert-light border-radius-corporate text-start">
+                                <small class="text-muted">
+                                    <strong>Código:</strong> {{ code }}<br>
+                                    <strong>Mensaje:</strong> {{ error }}
+                                </small>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Additional Help -->
+                <div class="mt-4">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-4">
+                            <h6 class="text-corporate-secondary mb-3">¿Necesitas ayuda?</h6>
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <div class="help-item">
+                                        <i class="bi bi-question-circle text-corporate-primary fs-4 mb-2 d-block"></i>
+                                        <small class="text-muted">Consulta la documentación del sistema</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="help-item">
+                                        <i class="bi bi-headset text-corporate-primary fs-4 mb-2 d-block"></i>
+                                        <small class="text-muted">Contacta al soporte técnico</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="help-item">
+                                        <i class="bi bi-arrow-clockwise text-corporate-primary fs-4 mb-2 d-block"></i>
+                                        <small class="text-muted">Intenta recargar la página</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.error-icon {
+    animation: pulse 2s infinite;
+}
+
+.error-code {
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.error-actions .btn {
+    min-width: 150px;
+}
+
+.help-item {
+    transition: transform 0.2s ease;
+}
+
+.help-item:hover {
+    transform: translateY(-2px);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .error-container {
+        margin: 1rem 0;
+        padding: 0 1rem;
+    }
+    
+    .error-code {
+        font-size: 3rem !important;
+    }
+    
+    .error-icon i {
+        font-size: 3rem !important;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+    }
+    
+    .error-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-code {
+        font-size: 2.5rem !important;
+    }
+    
+    .error-icon i {
+        font-size: 2.5rem !important;
+    }
+    
+    .card-body {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .help-item {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+<script>
+// Initialize error page functionality
+initErrorPage({{ code or 0 }}, "{{ url_for('index') }}");
+</script>
+{% endblock %}

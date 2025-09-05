@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Agencia de Aduanas ERP{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Sistema ERP de Gestión Aduanera</h1>
+        <p class="lead mb-4 mx-auto" style="max-width: 600px;">
+            Optimice sus operaciones de importación y exportación con nuestra plataforma integral de gestión aduanera
+        </p>
+        {% if not current_user %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+        </a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-speedometer2 me-2"></i>Ir al Dashboard
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3>Gestión Integral</h3>
+                    <p class="text-muted">Control completo de todas sus operaciones aduaneras en una sola plataforma centralizada y eficiente.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h3>Seguridad Avanzada</h3>
+                    <p class="text-muted">Sistema de autenticación robusto con control de acceso basado en roles y permisos granulares.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card feature-card h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="feature-icon">
+                        <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <h3>Reportes en Tiempo Real</h3>
+                    <p class="text-muted">Acceda a información actualizada y genere reportes detallados para tomar decisiones informadas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="py-5" style="background: white;">
+    <div class="container">
+        <h2 class="text-center mb-4">Nuestra Experiencia</h2>
+        <p class="text-center text-muted mb-5 mx-auto" style="max-width: 800px;">
+            Con más de 20 años de experiencia en el sector aduanero, ofrecemos soluciones tecnológicas 
+            que simplifican y agilizan todos los procesos de importación y exportación.
+        </p>
+        
+        <div class="row text-center">
+            <div class="col-6 col-md-3 mb-4">
+                <div class="stat-box">
+                    <h2 class="display-4 fw-bold" style="color: #3498db;">500+</h2>
+                    <p class="text-muted">Clientes Activos</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+                <div class="stat-box">
+                    <h2 class="display-4 fw-bold" style="color: #3498db;">10K+</h2>
+                    <p class="text-muted">Operaciones Mensuales</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+                <div class="stat-box">
+                    <h2 class="display-4 fw-bold" style="color: #3498db;">99.9%</h2>
+                    <p class="text-muted">Disponibilidad</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+                <div class="stat-box">
+                    <h2 class="display-4 fw-bold" style="color: #3498db;">24/7</h2>
+                    <p class="text-muted">Soporte Técnico</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

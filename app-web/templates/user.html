@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil - Agencia de Aduanas ERP{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Profile Header -->
+            <div class="card mb-4">
+                <div class="card-body text-center py-4">
+                    <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 120px; height: 120px;">
+                        <span class="text-white" style="font-size: 48px; font-weight: bold;">
+                            {{ user.username[0].upper() }}
+                        </span>
+                    </div>
+                    <h2>{{ user.username }}</h2>
+                    <p class="text-muted mb-0">{{ user.email }}</p>
+                </div>
+            </div>
+            
+            <!-- Personal Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Nombre de Usuario</div>
+                        <div class="col-sm-8">{{ user.username }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Correo Electrónico</div>
+                        <div class="col-sm-8">{{ user.email }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">Estado de la Cuenta</div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-success">Activa</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Última Conexión</div>
+                        <div class="col-sm-8">Hoy a las 10:30 AM</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Groups and Permissions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Grupos y Permisos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-2">Grupos</h6>
+                        <div>
+                            {% for group in user.groups %}
+                            <span class="badge bg-secondary me-1 mb-1">{{ group }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h6 class="text-muted mb-2">Permisos Asignados</h6>
+                        <div class="row g-2">
+                            {% for role in user.roles %}
+                            <div class="col-6 col-md-4">
+                                <div class="p-2 text-center rounded" style="background: #e3f2fd;">
+                                    {% if role == 'read' %}
+                                    <i class="bi bi-eye text-primary"></i> Lectura
+                                    {% elif role == 'write' %}
+                                    <i class="bi bi-pencil text-primary"></i> Escritura
+                                    {% elif role == 'update' %}
+                                    <i class="bi bi-arrow-repeat text-primary"></i> Actualización
+                                    {% elif role == 'delete' %}
+                                    <i class="bi bi-trash text-primary"></i> Eliminación
+                                    {% elif role == 'approve' %}
+                                    <i class="bi bi-check-circle text-primary"></i> Aprobación
+                                    {% else %}
+                                    {{ role }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Inicio de sesión exitoso</span>
+                                <small class="text-muted">Hoy, 10:30 AM</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Actualización de perfil</span>
+                                <small class="text-muted">Ayer, 3:45 PM</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Cambio de contraseña</span>
+                                <small class="text-muted">Hace 3 días, 2:20 PM</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Acceso al panel de administración</span>
+                                <small class="text-muted">Hace 5 días, 11:00 AM</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Settings -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Configuración de Cuenta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2 d-md-block">
+                        <button class="btn btn-primary" onclick="alert('Función no implementada')">
+                            <i class="bi bi-key me-2"></i>Cambiar Contraseña
+                        </button>
+                        <button class="btn btn-secondary" onclick="alert('Función no implementada')">
+                            <i class="bi bi-bell me-2"></i>Configurar Notificaciones
+                        </button>
+                        <button class="btn btn-danger" onclick="alert('Función no implementada')">
+                            <i class="bi bi-x-circle me-2"></i>Desactivar Cuenta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

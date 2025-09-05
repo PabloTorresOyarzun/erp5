@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Agencia de Aduanas ERP{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    
+    <!-- Aplicar estado del sidebar ANTES de renderizar -->
+    <script>
+        (function() {
+            if (window.innerWidth > 768) {
+                var sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (sidebarCollapsed) {
+                    document.documentElement.style.setProperty('--sidebar-width', '70px');
+                }
+            }
+        })();
+    </script>
+</head>
+<body class="{% if request.endpoint %}page-{{ request.endpoint }}{% endif %}"
+      {% if current_user and request.endpoint not in ['index', 'login', 'error'] %}
+      data-sidebar-initial-state="{{ 'collapsed' if request.cookies.get('sidebarCollapsed') == 'true' else 'expanded' }}"
+      {% endif %}>
+
+    <!-- Global Alert Container -->
+    <div id="globalAlertContainer" class="alert-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark navbar-custom">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                {% if current_user and request.endpoint not in ['index', 'login', 'error'] %}
+                <button class="btn btn-link text-white sidebar-toggle p-2 me-2" onclick="toggleSidebar()">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+                {% endif %}
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="d-none d-sm-inline">Agencia de Aduanas ERP</span>
+                    <span class="d-inline d-sm-none">Aduanas ERP</span>
+                </a>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                {% if current_user %}
+                    {% if request.endpoint != 'dashboard' %}
+                    <a href="{{ url_for('dashboard') }}" class="btn-dashboard d-none d-md-block">
+                        Dashboard
+                    </a>
+                    {% endif %}
+                    <div class="dropdown">
+                        <button class="user-info dropdown-toggle border-0 d-flex align-items-center gap-2" 
+                                type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle d-md-none"></i>
+                            <span class="d-none d-md-inline">{{ current_user.username }}</span>
+                            <span class="d-inline d-md-none">{{ current_user.username[:8] }}{% if current_user.username|length > 8 %}...{% endif %}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-header">{{ current_user.email }}</li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('user_profile') }}">
+                                <i class="bi bi-person-circle me-2"></i>Mi Perfil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                            </a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">
+                        <span class="d-none d-sm-inline">Iniciar Sesión</span>
+                        <i class="bi bi-box-arrow-in-right d-inline d-sm-none"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar Overlay (Mobile) -->
+    {% if current_user and request.endpoint not in ['index', 'login', 'error'] %}
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    {% endif %}
+    
+    <!-- Sidebar -->
+    {% if current_user and request.endpoint not in ['index', 'login', 'error'] %}
+    <aside class="sidebar" id="sidebar" style="transition: none;">
+        <a href="{{ url_for('dashboard') }}" class="sidebar-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-house-door icon"></i>
+            <span class="text-span">Inicio</span>
+        </a>
+        
+        <a href="{{ url_for('despachos') }}" class="sidebar-item {% if request.endpoint == 'despachos' %}active{% endif %}">
+            <i class="bi bi-box-seam icon"></i>
+            <span class="text-span">Despachos</span>
+        </a>
+        
+        {% if is_admin_group %}
+        <a href="{{ url_for('admin') }}" class="sidebar-item {% if request.endpoint == 'admin' %}active{% endif %}">
+            <i class="bi bi-gear icon"></i>
+            <span class="text-span">Administración</span>
+        </a>
+        {% endif %}
+    </aside>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main class="main-content {% if not current_user or request.endpoint in ['index', 'login', 'error'] %}full-width{% endif %}" 
+          id="mainContent" style="transition: none;">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Global JavaScript -->
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+</body>
+</html>
